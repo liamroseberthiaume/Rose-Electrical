@@ -1,0 +1,1474 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style><link rel="icon" href="../../images/rose-electrical-logo.png"></head><body>
+<title>Canada U18 Scouting Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+
+<style>
+  :root{
+    --bg:#EDF0F4;
+    --surface:#FFFFFF;
+    --surface-2:#F5F7FA;
+    --surface-3:#E7EBF1;
+    --ink:#0D1520;
+    --ink-2:#334052;
+    --muted:#5C6779;
+    --line:#D5DBE4;
+    --line-soft:#E4E9EF;
+    --blue:#1B47C4;
+    --blue-soft:#E6EAFA;
+    --red:#C8102E;
+    --red-soft:#FBE7EA;
+    --up:#0B7A4B;
+    --up-soft:#E2F2EA;
+    --down:#A6452B;
+    --down-soft:#F7E9E3;
+    --gold:#8A5D0A;
+    --gold-soft:#F6EEDC;
+    --shadow:0 1px 2px rgba(13,21,32,.05), 0 8px 24px rgba(13,21,32,.07);
+    --shadow-lg:0 24px 70px rgba(13,21,32,.22);
+    --sans:"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --display:"Archivo","IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0B0F16;
+      --surface:#141A24;
+      --surface-2:#1A212D;
+      --surface-3:#222B39;
+      --ink:#E8EDF4;
+      --ink-2:#C3CCD9;
+      --muted:#93A0B4;
+      --line:#26303F;
+      --line-soft:#1E2734;
+      --blue:#6E93FF;
+      --blue-soft:#17233F;
+      --red:#FF5C71;
+      --red-soft:#331821;
+      --up:#45C994;
+      --up-soft:#12291F;
+      --down:#F09878;
+      --down-soft:#2E1D16;
+      --gold:#D9A441;
+      --gold-soft:#2B2211;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+      --shadow-lg:0 24px 70px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0B0F16;
+    --surface:#141A24;
+    --surface-2:#1A212D;
+    --surface-3:#222B39;
+    --ink:#E8EDF4;
+    --ink-2:#C3CCD9;
+    --muted:#93A0B4;
+    --line:#26303F;
+    --line-soft:#1E2734;
+    --blue:#6E93FF;
+    --blue-soft:#17233F;
+    --red:#FF5C71;
+    --red-soft:#331821;
+    --up:#45C994;
+    --up-soft:#12291F;
+    --down:#F09878;
+    --down-soft:#2E1D16;
+    --gold:#D9A441;
+    --gold-soft:#2B2211;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+    --shadow-lg:0 24px 70px rgba(0,0,0,.6);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:16px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1160px;margin:0 auto;padding:0 24px 90px;}
+
+  /* ---------- masthead ---------- */
+  .mast{padding:52px 0 0;}
+  .rink-rule{display:flex;height:3px;margin-bottom:30px;}
+  .rink-rule i{display:block;height:100%;}
+  .rink-rule i:nth-child(1){flex:0 0 22%;background:var(--blue);}
+  .rink-rule i:nth-child(2){flex:1;background:var(--line);}
+  .rink-rule i:nth-child(3){flex:0 0 8%;background:var(--red);}
+  .eyebrow{
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted);margin:0 0 14px;
+  }
+  h1{
+    font-family:var(--display);font-weight:800;
+    font-size:clamp(38px,6.4vw,68px);line-height:.96;letter-spacing:-.025em;
+    margin:0 0 18px;text-wrap:balance;
+  }
+  h1 .dim{color:var(--muted);font-weight:600;}
+  .standfirst{
+    max-width:66ch;font-size:17px;color:var(--ink-2);margin:0 0 26px;
+  }
+  .standfirst strong{color:var(--ink);font-weight:600;}
+  .factbar{
+    display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line);
+    border-radius:3px;background:var(--surface);overflow:hidden;
+  }
+  .fact{
+    flex:1 1 150px;padding:14px 18px;border-right:1px solid var(--line-soft);
+  }
+  .fact:last-child{border-right:0;}
+  .fact dt{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+    color:var(--muted);margin:0 0 5px;
+  }
+  .fact dd{margin:0;font-family:var(--display);font-weight:700;font-size:19px;letter-spacing:-.01em;}
+  .fact dd small{font-family:var(--sans);font-weight:400;font-size:12.5px;color:var(--muted);display:block;letter-spacing:0;}
+
+  /* ---------- method ---------- */
+  .method{margin-top:44px;border:1px solid var(--line);border-radius:3px;background:var(--surface);}
+  .method > summary{
+    list-style:none;cursor:pointer;padding:18px 22px;display:flex;align-items:center;gap:12px;
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink);
+  }
+  .method > summary::-webkit-details-marker{display:none;}
+  .method > summary .chev{
+    margin-left:auto;color:var(--muted);transition:transform .2s ease;font-family:var(--sans);
+  }
+  .method[open] > summary .chev{transform:rotate(180deg);}
+  .method > summary:hover{background:var(--surface-2);}
+  .method-body{padding:4px 22px 26px;border-top:1px solid var(--line-soft);}
+  .method-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:26px;margin-top:22px;}
+  .method h3{
+    font-family:var(--display);font-size:15px;font-weight:700;letter-spacing:-.005em;margin:0 0 8px;
+    display:flex;align-items:baseline;gap:9px;
+  }
+  .method h3 .tag{
+    font-family:var(--mono);font-size:10px;letter-spacing:.1em;padding:2px 6px;border-radius:2px;
+    background:var(--surface-3);color:var(--muted);text-transform:uppercase;
+  }
+  .method p{margin:0 0 10px;font-size:14.5px;color:var(--ink-2);}
+  .method p:last-child{margin-bottom:0;}
+  .stat-callout{
+    font-family:var(--mono);font-size:13px;background:var(--surface-2);border-left:2px solid var(--blue);
+    padding:11px 14px;margin:12px 0;color:var(--ink-2);border-radius:0 2px 2px 0;
+  }
+  .stat-callout.r{border-left-color:var(--red);}
+  .stat-callout b{color:var(--ink);font-weight:600;}
+  .scale-key{
+    margin-top:24px;padding-top:20px;border-top:1px solid var(--line-soft);
+    font-size:14px;color:var(--ink-2);
+  }
+  .scale-key b{color:var(--ink);}
+
+  /* ---------- tabs ---------- */
+  .board-head{
+    margin-top:46px;display:flex;align-items:flex-end;justify-content:space-between;
+    gap:20px;flex-wrap:wrap;border-bottom:2px solid var(--line);
+  }
+  .tabs{display:flex;gap:0;}
+  .tab{
+    appearance:none;background:none;border:0;cursor:pointer;
+    font-family:var(--display);font-weight:700;font-size:clamp(17px,2.4vw,22px);letter-spacing:-.015em;
+    color:var(--muted);padding:10px 22px 13px;margin-bottom:-2px;
+    border-bottom:3px solid transparent;transition:color .15s ease;
+  }
+  .tab:first-child{padding-left:0;}
+  .tab:hover{color:var(--ink-2);}
+  .tab[aria-selected="true"]{color:var(--ink);}
+  .tab[data-board="current"][aria-selected="true"]{border-bottom-color:var(--blue);}
+  .tab[data-board="ceiling"][aria-selected="true"]{border-bottom-color:var(--red);}
+  .tab[data-board="gm"][aria-selected="true"]{border-bottom-color:var(--gold);}
+  .tab:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:2px;}
+  .filters{display:flex;gap:6px;padding-bottom:11px;flex-wrap:wrap;}
+  .fbtn{
+    appearance:none;cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:.09em;
+    text-transform:uppercase;padding:6px 11px;border-radius:2px;
+    border:1px solid var(--line);background:var(--surface);color:var(--muted);
+    transition:all .14s ease;
+  }
+  .fbtn:hover{color:var(--ink);border-color:var(--muted);}
+  .fbtn[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink);}
+  .fbtn:focus-visible{outline:2px solid var(--blue);outline-offset:2px;}
+
+  .board-note{
+    font-size:14px;color:var(--muted);margin:18px 0 22px;max-width:74ch;
+  }
+
+  /* ---------- rows ---------- */
+  .rows{display:flex;flex-direction:column;gap:6px;}
+  .row{
+    display:grid;
+    grid-template-columns:54px 1fr 232px 92px 74px;
+    align-items:center;gap:16px;
+    width:100%;text-align:left;
+    background:var(--surface);border:1px solid var(--line);border-left-width:3px;
+    border-radius:3px;padding:13px 16px 13px 13px;cursor:pointer;
+    font:inherit;color:inherit;
+    transition:border-color .14s ease, transform .14s ease, box-shadow .14s ease;
+  }
+  .row:hover{border-color:var(--muted);transform:translateX(2px);box-shadow:var(--shadow);}
+  .row:focus-visible{outline:2px solid var(--blue);outline-offset:2px;}
+  .board-current .row{border-left-color:var(--blue);}
+  .board-ceiling .row{border-left-color:var(--red);}
+  .board-current .row.tier-b{border-left-color:color-mix(in srgb,var(--blue) 45%,var(--line));}
+  .board-ceiling .row.tier-b{border-left-color:color-mix(in srgb,var(--red) 45%,var(--line));}
+  .board-gm .row{border-left-color:var(--gold);}
+  .board-gm .row.tier-b{border-left-color:color-mix(in srgb,var(--gold) 45%,var(--line));}
+  .board-current .row.tier-c,.board-ceiling .row.tier-c,.board-gm .row.tier-c{border-left-color:var(--line);}
+
+  .rk{
+    font-family:var(--mono);font-weight:600;font-size:24px;letter-spacing:-.03em;
+    font-variant-numeric:tabular-nums;text-align:right;color:var(--ink);
+  }
+  .board-current .rk{color:var(--blue);}
+  .board-ceiling .rk{color:var(--red);}
+  .board-gm .rk{color:var(--gold);}
+  .who .nm{
+    font-family:var(--display);font-weight:700;font-size:18px;letter-spacing:-.012em;
+    display:flex;align-items:center;gap:9px;flex-wrap:wrap;line-height:1.2;
+  }
+  .pos{
+    font-family:var(--mono);font-size:10px;letter-spacing:.08em;padding:2px 5px;border-radius:2px;
+    background:var(--surface-3);color:var(--muted);font-weight:500;
+  }
+  .who .sub{font-size:13px;color:var(--muted);margin-top:3px;}
+  .statline{
+    font-family:var(--mono);font-size:12.5px;color:var(--ink-2);
+    font-variant-numeric:tabular-nums;line-height:1.4;
+  }
+  .statline .lbl{color:var(--muted);}
+  .rating{
+    font-family:var(--display);font-weight:800;font-size:29px;letter-spacing:-.03em;
+    font-variant-numeric:tabular-nums;text-align:right;line-height:1;
+  }
+  .rating small{display:block;font-family:var(--mono);font-size:9.5px;font-weight:400;letter-spacing:.11em;
+    color:var(--muted);text-transform:uppercase;margin-top:4px;}
+  .move{
+    font-family:var(--mono);font-size:12.5px;font-weight:600;font-variant-numeric:tabular-nums;
+    text-align:center;padding:5px 0;border-radius:2px;
+  }
+  .move.up{color:var(--up);background:var(--up-soft);}
+  .move.down{color:var(--down);background:var(--down-soft);}
+  .move.flat{color:var(--muted);background:var(--surface-2);}
+  .move small{display:block;font-size:9px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;opacity:.85;}
+
+  /* ---------- dialog ---------- */
+  dialog{
+    border:0;padding:0;background:transparent;max-width:min(820px,94vw);width:100%;
+    color:var(--ink);
+  }
+  dialog::backdrop{background:rgba(6,10,16,.74);backdrop-filter:blur(3px);}
+  .card{
+    background:var(--surface);border-radius:4px;box-shadow:var(--shadow-lg);
+    max-height:90vh;overflow-y:auto;border-top:4px solid var(--blue);
+  }
+  .card.is-ceiling{border-top-color:var(--red);}
+  .card.is-gm{border-top-color:var(--gold);}
+  .card-head{padding:26px 30px 22px;border-bottom:1px solid var(--line-soft);position:relative;}
+  .closeb{
+    position:absolute;top:18px;right:20px;appearance:none;background:var(--surface-2);
+    border:1px solid var(--line);color:var(--muted);cursor:pointer;
+    width:32px;height:32px;border-radius:3px;font-size:17px;line-height:1;
+  }
+  .closeb:hover{color:var(--ink);border-color:var(--muted);}
+  .closeb:focus-visible{outline:2px solid var(--blue);outline-offset:2px;}
+  .card-head h2{
+    font-family:var(--display);font-weight:800;font-size:clamp(26px,4.4vw,38px);
+    letter-spacing:-.028em;line-height:1;margin:0 0 12px;padding-right:44px;
+  }
+  .vitals{
+    display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--mono);font-size:12px;
+    color:var(--muted);font-variant-numeric:tabular-nums;
+  }
+  .vitals b{color:var(--ink-2);font-weight:500;}
+  .flags{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;}
+  .flag{
+    font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+    padding:3px 8px;border-radius:2px;border:1px solid;
+  }
+  .flag.pos{color:var(--up);border-color:color-mix(in srgb,var(--up) 40%,transparent);background:var(--up-soft);}
+  .flag.neg{color:var(--down);border-color:color-mix(in srgb,var(--down) 40%,transparent);background:var(--down-soft);}
+  .flag.neu{color:var(--muted);border-color:var(--line);background:var(--surface-2);}
+
+  .ratings-strip{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--line-soft);}
+  .rs{padding:18px 30px;border-right:1px solid var(--line-soft);}
+  .rs:last-child{border-right:0;}
+  .rs dt{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+  .rs dd{margin:0;font-family:var(--display);font-weight:800;font-size:34px;letter-spacing:-.035em;line-height:1;font-variant-numeric:tabular-nums;}
+  .rs.cur dd{color:var(--blue);}
+  .rs.ceil dd{color:var(--red);}
+  .rs.gm dd{color:var(--gold);}
+  .rs .mv{display:block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.06em;
+    text-transform:uppercase;margin-top:7px;}
+  .rs dd .r{font-family:var(--mono);font-size:12px;font-weight:400;color:var(--muted);letter-spacing:0;margin-left:7px;}
+
+  .sec{padding:24px 30px;border-bottom:1px solid var(--line-soft);}
+  .sec:last-child{border-bottom:0;}
+  .sec > h3{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted);margin:0 0 15px;font-weight:500;
+  }
+  .tbl-scroll{overflow-x:auto;}
+  table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums;min-width:480px;}
+  th{
+    text-align:right;font-weight:500;color:var(--muted);font-size:10px;letter-spacing:.1em;
+    text-transform:uppercase;padding:0 0 8px;border-bottom:1px solid var(--line);
+  }
+  th:first-child,td:first-child{text-align:left;}
+  th:nth-child(2),td:nth-child(2){text-align:left;}
+  td{padding:8px 0;border-bottom:1px solid var(--line-soft);text-align:right;color:var(--ink-2);}
+  tr:last-child td{border-bottom:0;}
+  tr.hl td{color:var(--ink);font-weight:600;}
+  td.tm{color:var(--ink);padding-right:14px;}
+  th.tm{padding-right:14px;}
+
+  .tools{display:grid;gap:9px;}
+  .tool{display:grid;grid-template-columns:96px 1fr 26px;align-items:center;gap:12px;}
+  .tool .tn{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+  .tool .bar{height:7px;background:var(--surface-3);border-radius:1px;overflow:hidden;}
+  .tool .bar i{display:block;height:100%;background:var(--ink-2);border-radius:1px;}
+  .tool .bar i.elite{background:var(--blue);}
+  .tool .bar i.weak{background:var(--down);}
+  .tool .tv{font-family:var(--mono);font-size:12px;font-weight:600;text-align:right;font-variant-numeric:tabular-nums;}
+
+  .sw{display:grid;grid-template-columns:1fr 1fr;gap:26px;}
+  .sw h4{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+    margin:0 0 11px;font-weight:500;
+  }
+  .sw .s h4{color:var(--up);}
+  .sw .w h4{color:var(--down);}
+  .sw ul{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:8px;}
+  .sw li{font-size:14.5px;color:var(--ink-2);}
+  .sw li::marker{color:var(--muted);}
+
+  .rationale{display:grid;gap:18px;}
+  .rat{border-left:2px solid var(--line);padding-left:16px;}
+  .rat.c{border-left-color:var(--blue);}
+  .rat.p{border-left-color:var(--red);}
+  .rat.g{border-left-color:var(--gold);}
+  .rat h4{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 7px;font-weight:500;}
+  .rat p{margin:0;font-size:14.5px;color:var(--ink-2);}
+  .comp{font-size:14.5px;color:var(--ink-2);margin:0;}
+  .comp b{color:var(--ink);font-weight:600;}
+
+  /* ---------- footer ---------- */
+  footer{margin-top:56px;padding-top:26px;border-top:1px solid var(--line);font-size:13.5px;color:var(--muted);}
+  footer h4{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 12px;font-weight:500;}
+  footer ul{margin:0 0 20px;padding-left:17px;display:flex;flex-direction:column;gap:6px;}
+  footer a{color:var(--ink-2);text-decoration:underline;text-underline-offset:2px;text-decoration-color:var(--line);}
+  footer a:hover{color:var(--blue);text-decoration-color:var(--blue);}
+  footer a:focus-visible{outline:2px solid var(--blue);outline-offset:2px;}
+  .disclaimer{max-width:78ch;}
+
+  @media (max-width:820px){
+    .row{grid-template-columns:34px 1fr 62px;grid-template-areas:"rk who rt" "st st st" "mv mv mv";gap:8px 10px;padding:14px;align-items:start;}
+    .rk{grid-area:rk;font-size:19px;line-height:1.15;}
+    .who{grid-area:who;}
+    .who .nm{font-size:16.5px;gap:6px;}
+    .rating{grid-area:rt;font-size:23px;line-height:1;}
+    .statline{grid-area:st;padding-top:4px;}
+    .move{grid-area:mv;text-align:left;padding:5px 8px;}
+    .move small{display:inline;margin-left:6px;}
+    .sw{grid-template-columns:1fr;gap:20px;}
+    .ratings-strip{grid-template-columns:1fr;}
+    .rs{border-right:0;border-bottom:1px solid var(--line-soft);}
+    .rs:last-child{border-bottom:0;}
+    .card-head,.sec,.rs{padding-left:20px;padding-right:20px;}
+    .wrap{padding:0 16px 70px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important;animation:none !important;}
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="mast">
+    <div class="rink-rule"><i></i><i></i><i></i></div>
+    <p class="eyebrow">Hlinka Gretzky Cup · Edmonton · 3–8 August 2026</p>
+    <h1>Canada U18<br><span class="dim">Two Boards, One Roster</span></h1>
+    <p class="standfirst">
+      Twenty-two players won gold by an 8–1 margin over the United States. This board ranks all of them
+      three times — <strong>as the hockey world currently sees them</strong>, by
+      <strong>what the historical record says they should become</strong>, and finally by
+      <strong>the order I would actually draft in with my job on the line</strong>. Skaters and
+      goaltenders are ranked together. Every rating is anchored to this roster: the top player is a 99.
+    </p>
+    <dl class="factbar">
+      <div class="fact"><dt>Roster</dt><dd>22<small>13 F · 7 D · 2 G</small></dd></div>
+      <div class="fact"><dt>Draft classes</dt><dd>2 <small>16 in 2027 · 6 in 2028</small></dd></div>
+      <div class="fact"><dt>Tournament</dt><dd>5–0<small>34 GF · 12 GA</small></dd></div>
+      <div class="fact"><dt>Biggest riser</dt><dd>Berthiaume<small>+10 places on my board</small></dd></div>
+      <div class="fact"><dt>Biggest faller</dt><dd>Chitaroni<small>−11 places on my board</small></dd></div>
+    </dl>
+  </header>
+
+  <details class="method">
+    <summary>How these rankings were built <span class="chev">▾</span></summary>
+    <div class="method-body">
+      <div class="method-grid">
+        <div>
+          <h3>The Current Board <span class="tag">Consensus</span></h3>
+          <p>
+            Built from published 2027 and 2028 draft rankings — Elite Prospects' top 64, Daily Faceoff's
+            July 2026 top 32, TSN's Craig Button, NHL.com's lookahead — then adjusted for what actually
+            happened in Edmonton. It is a map of <em>perception</em>, not a verdict.
+          </p>
+          <p>
+            Because two draft classes are mixed here, players are placed on absolute prospect value rather
+            than rank-within-class. A projected first overall pick in 2028 outranks a projected 20th pick
+            in 2027.
+          </p>
+        </div>
+        <div>
+          <h3>The Ceiling Board <span class="tag">Projection</span></h3>
+          <p>
+            Same players, re-sorted by two historical patterns that have repeatedly separated the prospects
+            who exceeded expectations from the ones who did not. This is an <em>upside</em> sort: it asks
+            how high a player could get, not who I would actually call.
+          </p>
+          <p>
+            Neither model is predictive on its own. Together they identify the two errors that show up
+            most reliably in retrospect: mistaking <em>older</em> for <em>better</em>, and mistaking
+            <em>bigger now</em> for <em>better later</em>.
+          </p>
+        </div>
+        <div>
+          <h3>The GM Board <span class="tag">Decision</span></h3>
+          <p>
+            The order I would actually draft in, with my job riding on it. Same evidence as the ceiling
+            board, run through a risk rule rather than a pure upside sort — because the highest ceiling
+            and the right pick are not the same list.
+          </p>
+          <p>
+            Position-neutral: best player available, goaltenders included, with no scarcity premium for
+            centres and no automatic discount for the crease. Ranked on where a player ends up, not on
+            how soon he gets there.
+          </p>
+        </div>
+      </div>
+
+      <div class="method-grid" style="margin-top:30px;">
+        <div>
+          <h3>Pattern 1 — Age-adjusted production</h3>
+          <p>
+            The NHL's 15 September cutoff means a January-born prospect can be nearly nine months older
+            than an August-born one in the same class. At 16, that gap is enormous — and scouts price it
+            in far too weakly.
+          </p>
+          <div class="stat-callout">
+            <b>Deaner et al., PLOS One (2013):</b> Q4-born players were 14.5% of Canadian draftees from
+            1980–2006 but played 20% of the games and scored 19% of the points. Controlling for draft
+            slot, they reached 400 games at 25% vs 13% for Q1-born players. Relatively younger players
+            needed to be drafted <b>40–45 slots earlier</b> to be valued correctly.
+          </div>
+          <div class="stat-callout">
+            <b>Frontiers in Sports (2025), 10,485 draftees:</b> Q1 births were 35.7% of all picks, Q4 just
+            15.4% — yet 21% of Q4 draftees achieved career permanence against 15% of Q1, and 50% of Q4
+            never played an NHL game against 60% of Q1.
+          </div>
+          <p>
+            Applied here as points-per-game in top junior, weighted by exact age and league. Six players
+            on this roster are 2028-eligible and were producing against opponents up to two years older.
+          </p>
+        </div>
+        <div>
+          <h3>Pattern 2 — The physical maturity curve</h3>
+          <p>
+            A U18 national team is precisely the selection event that over-picks early-maturing bodies.
+            The strongest longitudinal evidence says that advantage reverses.
+          </p>
+          <div class="stat-callout r">
+            <b>Sports Medicine (2023), 4,787 Swedish players tracked 20 years:</b> early maturers made up
+            30% of U16 national team selections and late maturers 19%. Among the players who eventually
+            reached the NHL, early maturers were <b>25%</b> and late maturers <b>40%</b>. NHL players were
+            measurably later-maturing at 16.
+          </div>
+          <div class="stat-callout r">
+            <b>Hockey Graphs (2022):</b> scouts systematically overvalue size and non-scoring traits.
+            Low-scoring prospects are drafted "one entire draft group too early," while point production —
+            which explains roughly half the variance in NHL forward value — is underweighted.
+          </div>
+          <p>
+            Applied here as maturity headroom: current mass relative to frame and role, plus scouting
+            language about strength. A 150 lb forward producing in the WHL has somewhere to go. A 201 lb
+            16-year-old winning on leverage has already spent his advantage.
+          </p>
+        </div>
+      </div>
+
+      <div class="method-grid" style="margin-top:30px;">
+        <div>
+          <h3>The rule the GM board runs on <span class="tag">Asymmetric risk</span></h3>
+          <p>
+            A draft board is not a talent ranking, it is a sequence of decisions, and the question at every
+            slot is not "who is best?" but "what does passing on this player actually buy me?" Three tests,
+            applied in order:
+          </p>
+          <p>
+            <strong>One — is the safe alternative genuinely safe?</strong> Take the volatile player when the
+            conservative option's realistic outcome is no better than the volatile player's failure case.
+            Low variance around a mediocre result is not safety, it is a worse bet wearing a disguise.
+          </p>
+          <p>
+            <strong>Two — is the case evidence or is it decoration?</strong> Production, at a known age, in
+            a known league, is evidence. A skating grade, a frame, a pedigree, a ranking someone else
+            published — those are decoration until something confirms them. Cases built on decoration fall.
+          </p>
+          <p>
+            <strong>Three — absent evidence is not bad evidence.</strong> A player with four games of tape
+            is unknown; a player with a full season of weak numbers is known and disappointing. They do not
+            get the same treatment.
+          </p>
+        </div>
+        <div>
+          <h3>The rule, worked <span class="tag">The two goaltenders</span></h3>
+          <p>
+            Leif Oaten looks like the safe pick. He carried a 31-game WHL starter's load at sixteen, won
+            Canada's crease outright and started the gold-medal game. Sam Berthiaume has one QMJHL
+            appearance and sat behind him in Edmonton.
+          </p>
+          <div class="stat-callout">
+            <b>Test one:</b> Oaten's .876 is roughly 15–25 points <b>below</b> WHL average.
+            Berthiaume's .927 is roughly 30–40 points <b>above</b> MJAHL average — in a men's league, at
+            sixteen. Oaten's 6-19-2 team excuses some of his number and Berthiaume's 12-4-0 team flatters
+            some of his. Adjust both and the gap narrows without closing.
+          </div>
+          <p>
+            The safe pick's floor is a junior goaltender who never posted an above-average season. That is
+            not a floor worth protecting. Meanwhile 6'5" at 185 lb is the largest strength runway on the
+            roster, and Berthiaume's save percentage is strong at nearly every level he has played.
+          </p>
+          <p>
+            So Berthiaume goes twelfth and Oaten seventeenth — a ten-place rise off a consensus that had
+            Berthiaume last. The risk being bought knowingly: tall-and-light is the specific goaltending
+            archetype that never coordinates.
+          </p>
+        </div>
+      </div>
+
+      <div class="scale-key">
+        <p style="margin:0 0 10px;">
+          <b>Overall rating (0–99).</b> Anchored to this roster only. The best player here is a 99; every
+          other rating is that player's distance from him within this group. It is not a global birth-year
+          rating — a 76 on this board is still one of the better 17-year-olds in the world.
+        </p>
+        <p style="margin:0 0 10px;">
+          <b>Tool grades (1–10).</b> Projected NHL grade for that tool at maturity, not current level.
+          5 is NHL average, 8+ is a top-of-league tool, 3 or below is a genuine limitation. Goaltenders
+          use their own five tools.
+        </p>
+        <p style="margin:0 0 10px;">
+          <b>Three ratings per player.</b> Consensus, ceiling, and my board. Where they diverge is the
+          whole point: consensus versus ceiling shows what the market is mispricing, ceiling versus my
+          board shows where I would not spend a pick even though the upside is real.
+        </p>
+        <p style="margin:0;">
+          <b>Caveat worth stating plainly.</b> These are 16- and 17-year-olds. Two of them are goaltenders,
+          where prediction at this age is barely better than noise. All three boards are sets of
+          falsifiable claims, not forecasts — the value is in seeing where consensus and evidence pull
+          apart, and checking back in two years.
+        </p>
+      </div>
+    </div>
+  </details>
+
+  <div class="board-head">
+    <div class="tabs" role="tablist" aria-label="Ranking boards">
+      <button class="tab" role="tab" data-board="current" aria-selected="true" id="tab-current" aria-controls="panel">Current Board</button>
+      <button class="tab" role="tab" data-board="ceiling" aria-selected="false" id="tab-ceiling" aria-controls="panel">Ceiling Board</button>
+      <button class="tab" role="tab" data-board="gm" aria-selected="false" id="tab-gm" aria-controls="panel">GM Board</button>
+    </div>
+    <div class="filters" role="group" aria-label="Filter by position">
+      <button class="fbtn" data-pos="all" aria-pressed="true">All</button>
+      <button class="fbtn" data-pos="F" aria-pressed="false">Forwards</button>
+      <button class="fbtn" data-pos="D" aria-pressed="false">Defence</button>
+      <button class="fbtn" data-pos="G" aria-pressed="false">Goalies</button>
+    </div>
+  </div>
+
+  <p class="board-note" id="board-note"></p>
+
+  <div class="rows board-current" id="panel" role="tabpanel" aria-labelledby="tab-current"></div>
+
+  <footer>
+    <h4>Sources</h4>
+    <ul>
+      <li><a href="https://www.hockeycanada.ca/en-ca/news/canada-wins-hlinka-gold-2026-hgc">Hockey Canada — Canada wins gold at 2026 Hlinka Gretzky Cup</a></li>
+      <li><a href="https://www.eliteprospects.com/league/hlinka-gretzky-cup/stats/2026-2027">Elite Prospects — 2026 Hlinka Gretzky Cup statistics</a>, and individual player profiles and scouting reports</li>
+      <li><a href="https://www.eliteprospects.com/ranking-portal/ad12eeb3-d79a-4d9e-ad9d-dbbe8cc292fe/2027-nhl-draft-ranking-top-64">Elite Prospects — 2027 NHL Draft Ranking, Top 64</a></li>
+      <li><a href="https://www.dailyfaceoff.com/news/2027-nhl-draft-rankings-top-32-july-dupont-privalov-joseph-skvortsov-meyer-scouting-reports">Daily Faceoff — 2027 NHL Draft Rankings, top 32 (July 2026)</a> and <a href="https://www.dailyfaceoff.com/news/2027-nhl-draft-top-prospects-top-players-hlinka-gretzky-cup-scouting-reports">Hlinka Gretzky Cup standouts</a></li>
+      <li><a href="https://www.tsn.ca/nhl/article/joseph-meyer-dupont-headline-2027-nhl-draft-lookahead/">TSN — Craig Button's 2027 draft lookahead</a> · <a href="https://www.nhl.com/news/landon-dupont-at-the-very-top-of-2027-draft-class-scouts-say">NHL.com — scouts on Landon DuPont</a> · <a href="https://www.nhl.com/news/topic/nhl-draft/maddox-schultz-has-big-footsteps-to-follow-ahead-of-2028-nhl-draft">NHL.com — Maddox Schultz</a></li>
+      <li><a href="https://thehockeynews.com/ohl/latest-news/three-ohlers-who-boosted-their-draft-stock-at-the-2026-hlinka-gretzky-cup">The Hockey News — OHLers who boosted their stock in Edmonton</a></li>
+      <li><a href="https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0057753">Deaner, Lowen &amp; Cobley — "Born at the Wrong Time: Selection Bias in the NHL Draft," PLOS One (2013)</a></li>
+      <li><a href="https://www.frontiersin.org/journals/sports-and-active-living/articles/10.3389/fspor.2025.1593409/full">"Age effects in NHL draftees: a data-driven review," Frontiers in Sports and Active Living (2025)</a></li>
+      <li><a href="https://link.springer.com/article/10.1007/s40279-023-01985-z">"Who Reaches the NHL? A 20-Year Retrospective Analysis... in Relation to Biological Maturation," Sports Medicine (2023)</a></li>
+      <li><a href="https://hockey-graphs.com/2022/07/07/behind-the-numbers-where-analytics-and-scouts-get-the-draft-wrong/">Hockey Graphs — "Where analytics and scouts get the draft wrong"</a></li>
+      <li><a href="https://www.eliteprospects.com/page/chl-exceptional-status-players-the-complete-list">Elite Prospects — complete list of CHL exceptional status players</a></li>
+    </ul>
+    <p class="disclaimer">
+      Club statistics are 2025–26 regular season. Tournament lines are the 2026 Hlinka Gretzky Cup;
+      the published tournament table lists only Canada's top 15 scorers, so two players outside it
+      (Chitaroni, Norman) are shown at zero points — Canada's 34 goals are fully accounted for among
+      the listed scorers, but their assist totals are not individually published.
+      Ratings, tool grades and the ceiling ordering are this board's own analysis, built on the sources
+      above; they are not the opinion of any scouting service. Player comparables are archetypes for
+      illustrating a projection, not predictions of career outcome.
+    </p>
+  </footer>
+</div>
+
+<dialog id="dlg" aria-labelledby="dlg-name"></dialog>
+
+<script>
+const P = [
+ {
+  id:"dupont", n:"Landon DuPont", pos:"D", posLabel:"D · Right", grp:"D",
+  ht:"6'0\"", wt:"190 lb", born:"28 May 2009", age:"17", home:"Calgary, AB",
+  club:"Univ. of Michigan (NCAA)", prev:"Everett Silvertips (WHL)", draft:"2027",
+  cur:99, curRank:1, ceil:99, ceilRank:1, gm:99, gmRank:1,
+  line:"WHL 25-26: 63 GP · 18–55—73 ‖ HGC: 5 GP · 2–6—8",
+  stats:[
+   {s:"2024–25", t:"Everett (WHL)", gp:64, g:17, a:43, p:60, pim:26},
+   {s:"2025–26", t:"Everett (WHL)", gp:63, g:18, a:55, p:73, pim:52, hl:true},
+   {s:"2025–26", t:"Canada U17 (WHC-17)", gp:5, g:"—", a:"—", p:"—", pim:"—"},
+   {s:"2026", t:"Canada U18 (Hlinka)", gp:5, g:2, a:6, p:8, pim:6, hl:true}
+  ],
+  tools:[["Skating",9],["Shot",7],["Hockey sense",10],["Compete",7],["Physicality",6]],
+  flags:[["neu","Exceptional status"],["neu","NCAA transition year"],["neg","No frame cushion"]],
+  s:[
+   "Seventy-three points in 63 games as a 16-year-old WHL defenceman — the most extreme age-adjusted statistical season on this roster by a wide margin, following 60 points at 15.",
+   "NHL Central Scouting's read is that the brain is the tool: \"He's been able to process the game at an elite level from a very young age. Very few prospects can do this.\"",
+   "Elite four-way edges and explosiveness. He escapes forechecks with control rather than panic and manages play \"like a 20-year-old.\"",
+   "Added a physical edge in year two — 52 penalty minutes after 26 — without losing any of the offence. Captained the gold-medal team and put up four assists in the final."
+  ],
+  w:[
+   "6'0\" and 190 lb is average for a projected No. 1 defenceman. There is no size cushion if the skating or processing edge narrows against men.",
+   "Defensive-zone detail still trails the offensive game; his value is built on transition and puck control, not on shutdown minutes.",
+   "The move to Michigan means a season where his raw production will flatten against 22-year-olds — scouts will have to read through that, and some won't.",
+   "The exceptional-status label distorts evaluation in both directions. Of the eight resolved cases before him, five became stars, one (Sean Day) never established himself, and two took longer than expected."
+  ],
+  comp:"A Quinn Hughes-style processing-and-edges defenceman with a heavier shot. The label comp is Aaron Ekblad; the stylistic one is not.",
+  curWhy:"Unanimous No. 1 for 2027 across Elite Prospects, Daily Faceoff and NHL.com's scout survey. Nothing in Edmonton changed that — he wore the C and led all defencemen in scoring.",
+  gmWhy:"No philosophy moves him. He is the rare prospect where the tools case and the evidence case are the same case — 73 points as a 16-year-old WHL defenceman is not a projection, it is a result. The exceptional-status base rate (five stars, one washout, two slow starts from eight resolved cases) is the only reason to hesitate, and it is nowhere near enough.",
+  ceilWhy:"Both models leave him first. The production is historic in age-adjusted terms, and at 6'0\"/190 with a late-May birthday he is not yet physically maxed. The only honest deduction is the exceptional-status base rate, which is good but not perfect."
+ },
+ {
+  id:"schultz", n:"Maddox Schultz", pos:"F", posLabel:"C · Left", grp:"F",
+  ht:"5'10\"", wt:"181 lb", born:"15 March 2010", age:"16", home:"Medicine Hat, AB",
+  club:"Regina Pats (WHL)", prev:"Regina Pat Canadians U18 AAA", draft:"2028",
+  cur:95, curRank:2, ceil:96, ceilRank:2, gm:96, gmRank:2,
+  line:"WHL 25-26: 34 GP · 15–14—29 ‖ HGC: 5 GP · 3–7—10",
+  stats:[
+   {s:"2025–26", t:"Regina Pat Canadians (U18 AAA)", gp:21, g:30, a:30, p:60, pim:30},
+   {s:"2025–26", t:"Regina Pats (WHL)", gp:34, g:15, a:14, p:29, pim:20, hl:true},
+   {s:"2025–26", t:"Canada U17 (WHC-17)", gp:5, g:"—", a:"—", p:"—", pim:"—"},
+   {s:"2026", t:"Canada U18 (Hlinka)", gp:5, g:3, a:7, p:10, pim:2, hl:true}
+  ],
+  tools:[["Skating",8],["Shot",8],["Hockey sense",9],["Compete",9],["Physicality",7]],
+  flags:[["pos","2028 eligible"],["neg","Q1 birth in cohort"],["neg","Limited frame headroom"]],
+  s:[
+   "0.85 points per game in the WHL as a 15-year-old — the highest age-adjusted production figure on this roster, ahead of every 2027-eligible forward here.",
+   "A genuine 200-foot game rather than a scorer who backchecks. Head coach Ryan Oulahen: \"He can have an imprint on any part of the game, not only the physicality element, the hockey-sense element.\"",
+   "Co-led the Hlinka Gretzky Cup in scoring with 10 points and took Player of the Game in an 8–1 gold-medal win, against players up to 18 months older.",
+   "Declined to apply for WHL exceptional status, took the Western Canadian Development Model's half-season instead, and produced immediately in both environments."
+  ],
+  w:[
+   "5'10\" and already 181 lb — the least physical headroom of any top-five player here. Most of the strength gains are behind him, not ahead.",
+   "Born in March, which places him in the first quartile of his own 2010 cohort — the birth band the maturation research consistently penalises.",
+   "Thirty-four WHL games is a half-season sample, and it came on a team where he was protected rather than matched against top pairs.",
+   "The Sidney Crosby comparison came from a teammate, not a scout, but it will follow him. Almost nobody clears that expectation, and the gap gets read as a decline."
+  ],
+  comp:"A Brayden Point-type compact, high-sense two-way centre — the successful version of the short, thick, mature-at-16 build.",
+  curWhy:"Widely projected as an early candidate for first overall in 2028, and the tournament's most decorated performer. He is second here only because DuPont is a year further down the same road.",
+  gmWhy:"The maturity flag is real and I am taking him anyway. The asymmetric test asks whether a safer alternative offers a comparable payoff, and none does: 0.85 points per game in the WHL at fifteen is the second-best piece of evidence on this roster. Passing on that because he is 5'10\" and already strong is the kind of caution that ends careers from the other direction.",
+  ceilWhy:"The maturity model wants to mark him down — Q1 birthday, compact and filled-out frame. The production gap is simply too large for that to matter: 0.85 P/GP at 15 in the WHL is a different category of evidence."
+ },
+ {
+  id:"joseph", n:"Alexis Joseph", pos:"F", posLabel:"C · Left", grp:"F",
+  ht:"6'5\"", wt:"201 lb", born:"16 June 2009", age:"17", home:"Lachenaie, QC",
+  club:"Saint John Sea Dogs (QMJHL)", prev:"Collège Esther-Blondin (QM18AAA)", draft:"2027",
+  cur:94, curRank:3, ceil:91, ceilRank:5, gm:92, gmRank:4,
+  line:"QMJHL 25-26: 54 GP · 24–36—60 ‖ HGC: 5 GP · 1–2—3",
+  stats:[
+   {s:"2024–25", t:"Collège Esther-Blondin (QM18AAA)", gp:42, g:23, a:33, p:56, pim:26},
+   {s:"2025–26", t:"Saint John (QMJHL)", gp:54, g:24, a:36, p:60, pim:38, hl:true},
+   {s:"2025–26", t:"Canada Red U17 (WHC-17)", gp:5, g:6, a:7, p:13, pim:4, hl:true},
+   {s:"2026", t:"Canada U18 (Hlinka)", gp:5, g:1, a:2, p:3, pim:0}
+  ],
+  tools:[["Skating",6],["Shot",8],["Hockey sense",8],["Compete",6],["Physicality",8]],
+  flags:[["neg","Maturity flag — extreme"],["neg","Consistency"],["neu","Skating is the swing tool"]],
+  s:[
+   "1.11 points per game as a 16-year-old QMJHL rookie, good for the league's All-Rookie Team. For a centre that age it is elite production regardless of size.",
+   "High-end passing at 6'5\" is a genuinely rare pairing — scouts repeatedly describe him as \"the most skilled player on the ice,\" not merely the biggest.",
+   "Deadly release, and the reach lets him protect pucks through contact and extend plays that smaller players have to abandon.",
+   "Dominated the 2025 U17 World Challenge with 13 points in five games and led the tournament in goals."
+  ],
+  w:[
+   "Three points in five Hlinka games against the best of his own age group, after being billed as the tournament's top forward.",
+   "Scouts flag the same thing repeatedly: \"a bit of everything from Joseph… didn't come together into a cohesive performance,\" and that he \"has not been himself.\"",
+   "Skating is the tool most likely to be exposed as the game speeds up. At 6'5\" the stride has further to travel and the recovery steps are slower.",
+   "Physical engagement is inconsistent — he leans on reach and leverage rather than initiating, which is the pattern that stops working once opponents match his frame."
+  ],
+  comp:"A Tage Thompson-style long-levered scoring centre if the skating comes. The downside case is a big, skilled winger who never converts size into pace.",
+  curWhy:"Top three on every published 2027 board — Craig Button has him first, Daily Faceoff third, Elite Prospects fourth. His QMJHL rookie season is the best forward season in the class.",
+  gmWhy:"One place down and no further. The maturity flag is the most extreme among forwards and the skating is a genuine swing tool. But outside DuPont and Schultz nobody here projects as a first-line centre, and 1.11 points per game as a sixteen-year-old is evidence, not reputation. I take the risk because no safe alternative offers anything close to the reward.",
+  ceilWhy:"He stays elite; he does not stay third. At 6'5\" and 201 lb at 17 he is the most physically mature forward on this roster, which is exactly the profile the Swedish maturation data shows converts worst from U18 selection to NHL career. Two spots is a modest, evidence-led haircut, not a bust call."
+ },
+ {
+  id:"pue", n:"Liam Pue", pos:"F", posLabel:"RW · Right", grp:"F",
+  ht:"6'2\"", wt:"176 lb", born:"16 February 2010", age:"16", home:"Langley, BC",
+  club:"Regina Pats (WHL)", prev:"Regina Pat Canadians U18 AAA", draft:"2028",
+  cur:91, curRank:4, ceil:88, ceilRank:7, gm:86, gmRank:8,
+  line:"WHL 25-26: 34 GP · 6–10—16 ‖ HGC: 5 GP · 6–3—9",
+  stats:[
+   {s:"2024–25", t:"Langley Hockey Academy (18U)", gp:29, g:30, a:20, p:50, pim:85},
+   {s:"2025–26", t:"Regina Pat Canadians (U18 AAA)", gp:21, g:16, a:32, p:48, pim:52},
+   {s:"2025–26", t:"Regina Pats (WHL)", gp:34, g:6, a:10, p:16, pim:20, hl:true},
+   {s:"2025–26", t:"Canada White U17 (WHC-17)", gp:5, g:4, a:4, p:8, pim:4},
+   {s:"2026", t:"Canada U18 (Hlinka)", gp:5, g:6, a:3, p:9, pim:4, hl:true}
+  ],
+  tools:[["Skating",7],["Shot",9],["Hockey sense",7],["Compete",7],["Physicality",6]],
+  flags:[["pos","2028 eligible"],["pos","Maturity upside"],["neg","Q1 birth in cohort"],["neg","One-tool reliance"]],
+  s:[
+   "The best release on this roster and it isn't especially close — one scout called it \"one of the best I have ever seen at that age.\" He shoots without setup, from anywhere, off either foot.",
+   "Led the Hlinka Gretzky Cup in goals with six at 16 years old, against a field mostly a year older.",
+   "6'2\" carrying 176 lb means genuine strength runway. He is rangy and explosive before the mass has arrived.",
+   "First overall in the 2025 WHL Prospects Draft, and the playmaking has started to emerge — 32 assists in 21 U18 AAA games alongside the goal totals."
+  ],
+  w:[
+   "0.47 points per game in the WHL against Maddox Schultz's 0.85 in the same 34 games on the same team. That gap between the roster's two 2010s is the central fact of his evaluation.",
+   "Playmaking and defensive detail both lag the shot badly. When the puck isn't finding him he can disappear for stretches.",
+   "February birthday puts him in the first quartile of his 2010 cohort — the same early-development flag that applies to Schultz, without the same production to override it.",
+   "Game-to-game production swings are wide; the tournament output was front-loaded onto a line with Schultz and Warren."
+  ],
+  comp:"A right-shot volume shooter in the Cole Caufield band if the sense catches up to the release; a complementary finisher if it doesn't.",
+  curWhy:"Ranked near the top of published 2028 boards and led the Hlinka in goals. Perception of him is running very hot off a five-game tournament.",
+  gmWhy:"Four places down, because the philosophy punishes narrow cases and his is narrower than his ranking suggests. The release is genuinely elite and elite single tools do translate — that is why he stays top ten. But 0.47 points per game against Schultz's 0.85, in the same 34 games on the same team, is a comparison I cannot unsee, and neither the playmaking nor the defensive detail is close to the shot yet.",
+  ceilWhy:"Elite single tools do translate, and the shot qualifies. But the age-adjusted production gap to Schultz is real, he is Q1-born within his own class, and the projection currently rests on one skill. Three places down, still top ten."
+ },
+ {
+  id:"wycisk", n:"Jaakko Wycisk", pos:"F", posLabel:"RW/C · Right", grp:"F",
+  ht:"6'1\"", wt:"190 lb", born:"16 March 2009", age:"17", home:"München, Germany",
+  club:"Guelph Storm (OHL)", prev:"BioSteel Sports Academy", draft:"2027",
+  cur:89, curRank:5, ceil:85, ceilRank:9, gm:84, gmRank:9,
+  line:"OHL 25-26: 60 GP · 17–26—43 ‖ HGC: 5 GP · 2–8—10",
+  stats:[
+   {s:"2024–25", t:"BioSteel / Sun County (U16 AAA)", gp:33, g:36, a:33, p:69, pim:20},
+   {s:"2025–26", t:"Guelph (OHL)", gp:60, g:17, a:26, p:43, pim:22, hl:true},
+   {s:"2025–26", t:"Canada White U17 (WHC-17)", gp:5, g:1, a:1, p:2, pim:0},
+   {s:"2026", t:"Canada U18 (Hlinka)", gp:5, g:2, a:8, p:10, pim:8, hl:true}
+  ],
+  tools:[["Skating",7],["Shot",8],["Hockey sense",8],["Compete",8],["Physicality",7]],
+  flags:[["neg","Q1 birth"],["neg","Mature frame"],["pos","Tournament riser"]],
+  s:[
+   "0.72 points per game as an OHL rookie — the third-best forward mark on this roster and comfortably first-round production.",
+   "The tournament's biggest stock riser: 10 points in five games and a tournament-leading eight assists, most of them creating for others rather than finishing.",
+   "Powerful shot paired with mature reads. Scouts describe him as playing older than his age and winning battles above his listed weight.",
+   "Dual Canadian-German eligibility and a rapid climb — from ALLIANCE U16 to an OHL top-six role inside a single season."
+  ],
+  w:[
+   "Mid-March birthday puts him among the older players in the 2027 class, which discounts the raw production once you age-adjust it.",
+   "Already 190 lb at 17. The physical edge he currently wins with is not a growing asset.",
+   "His Hlinka production came playing alongside Schultz and Pue; eight assists is excellent, but the finishing on the other end was elite.",
+   "Skating is good rather than separating — he creates with hands and timing, not by beating people wide."
+  ],
+  comp:"A connective, heavy-on-pucks winger in the Zach Benson mould with more size and less pace.",
+  curWhy:"Elite Prospects has him 11th for 2027 and the tournament pushed him firmly into first-round conversation. Nobody left Edmonton with more momentum.",
+  gmWhy:"Nothing here is a criticism of the player. He was the best story of the tournament and 0.72 points per game as an OHL rookie is real production. He falls because he is a March birthday already carrying 190 pounds — the case is fully priced, with no age discount and no strength runway left to buy. I am paying today's price for today's player, and below him sit names where I am not.",
+  ceilWhy:"Four places down for the same two reasons: he is old for the class and physically finished. That is a downgrade relative to a very high starting point, not a warning — a top-ten ceiling on this roster is still a top-15 pick."
+ },
+ {
+  id:"cripps", n:"Brock Cripps", pos:"D", posLabel:"D · Right", grp:"D",
+  ht:"5'10\"", wt:"161 lb", born:"23 July 2009", age:"17", home:"Victoria, BC",
+  club:"Prince Albert Raiders (WHL)", prev:"St. George's School (CSSHL)", draft:"2027",
+  cur:88, curRank:6, ceil:92, ceilRank:4, gm:91, gmRank:5,
+  line:"WHL 25-26: 62 GP · 6–31—37 ‖ HGC: 5 GP · 1–5—6",
+  stats:[
+   {s:"2024–25", t:"St. George's (CSSHL U18)", gp:30, g:7, a:39, p:46, pim:18},
+   {s:"2024–25", t:"Prince Albert (WHL)", gp:4, g:0, a:1, p:1, pim:2},
+   {s:"2025–26", t:"Prince Albert (WHL)", gp:62, g:6, a:31, p:37, pim:18, hl:true},
+   {s:"2025–26", t:"Canada Red U17 (WHC-17)", gp:5, g:1, a:5, p:6, pim:4},
+   {s:"2026", t:"Canada U18 (Hlinka)", gp:5, g:1, a:5, p:6, pim:0, hl:true}
+  ],
+  tools:[["Skating",8],["Shot",6],["Hockey sense",9],["Compete",7],["Physicality",4]],
+  flags:[["pos","Late birthday"],["pos","Maturity upside — extreme"],["neg","Frame risk — extreme"],["neu","Highest variance on board"]],
+  s:[
+   "0.60 points per game as a 16-year-old WHL rookie defenceman. Only DuPont has a better age-adjusted blue-line season on this roster, and DuPont is a generational case.",
+   "Described as \"one of the WHL's best blueline creators\" — dynamic, deceptive, and reading passing lanes \"a split second before the opportunity.\"",
+   "A 23 July birthday puts him in the narrow late-Q3 band that the Deaner and Frontiers research identifies as the most systematically underrated in the entire draft.",
+   "Scouts already say the quiet part out loud: he is \"one growth spurt away from being a top-five prospect.\""
+  ],
+  w:[
+   "161 lb is the lightest load-bearing frame on this roster. He loses net-front and wall battles now, and will lose them worse against men.",
+   "A right-shot defenceman who defends with stick and position because body checking is not available to him. That works in junior more often than it works in the NHL.",
+   "The shot is a distribution tool rather than a weapon — six goals in 62 games.",
+   "If the strength never arrives, the entire projection collapses. There is no fallback role for a 5'10\", 161 lb defenceman who can't defend physically."
+  ],
+  comp:"The successful profile is Lane Hutson's. The failure mode is a skilled junior defenceman whose defensive limitations outrun the offence.",
+  curWhy:"Elite Prospects has him eighth for 2027, Daily Faceoff 16th. The market already likes him a great deal — the split between those two numbers is the size question.",
+  gmWhy:"The clearest asymmetric bet on the board. Everything about 161 pounds is frightening and the bust case is live. But look at what playing safe in this range actually buys: Tait, or L'Italien — a defenceman whose ceiling is a fourth pairing. Cripps's failure case is no worse than their success case, and his success case is a power play run by a defenceman who produced 0.60 points per game in the WHL at sixteen. That is the trade you take.",
+  ceilWhy:"Both models push the same direction at once, which is rare. Late-July birthday, top-tier age-adjusted production, and the largest strength runway of any defenceman here. He is also the highest-variance name on the board: the ceiling moves him to fourth, the floor is not an NHL player at all."
+ },
+ {
+  id:"england", n:"Brock England", pos:"F", posLabel:"C · Left", grp:"F",
+  ht:"5'11\"", wt:"174 lb", born:"22 August 2009", age:"16", home:"Red Deer, AB",
+  club:"Seattle Thunderbirds (WHL)", prev:"CSSHL U18", draft:"2027",
+  cur:87, curRank:7, ceil:93, ceilRank:3, gm:94, gmRank:3,
+  line:"WHL 25-26: 64 GP · 21–30—51 ‖ HGC: 5 GP · 4–1—5",
+  stats:[
+   {s:"2025–26", t:"Seattle (WHL)", gp:64, g:21, a:30, p:51, pim:18, hl:true},
+   {s:"2025–26", t:"Canada U17 (WHC-17)", gp:5, g:"—", a:"—", p:"—", pim:"—"},
+   {s:"2026", t:"Canada U18 (Hlinka)", gp:5, g:4, a:1, p:5, pim:2, hl:true}
+  ],
+  tools:[["Skating",9],["Shot",6],["Hockey sense",8],["Compete",7],["Physicality",5]],
+  flags:[["pos","Youngest 2027-eligible here"],["pos","Maturity upside"],["neg","Hands trail the feet"]],
+  s:[
+   "Born 22 August 2009 — the youngest 2027-eligible player on this roster — and he still posted 0.80 points per game as a WHL rookie. That is the strongest age-adjusted forward season here.",
+   "Scouts do not hedge on the skating: \"his speed is just a cheat code,\" \"an absurd advantage for him at this level.\" The stride mechanics are called textbook, which means the tool is a floor rather than a ceiling.",
+   "174 lb with obvious room, and a +12 rating on a team that needed him in real minutes all year.",
+   "Scored twice in the gold-medal game and four times in five tournament games — the finishing showed up when the sample was hardest."
+  ],
+  w:[
+   "Hands and shot both trail the feet. He generates more chances than he converts, and scouts frame the skill as potential rather than present — \"in time, his handling and skating grades could be high-end.\"",
+   "The late birthday cuts both ways: he will be physically behind his own draft cohort for another two seasons, and scouts watching in real time will see a smaller player losing battles.",
+   "One season of top-junior tape. There is no second data point to check the first against.",
+   "Only one assist at the tournament — the playmaking that produced 30 in Seattle did not travel."
+  ],
+  comp:"A Cole Perfetti-pace scoring winger if the hands catch the feet; a high-end energy centre in the Ridly Greig band if they don't.",
+  curWhy:"Daily Faceoff has him seventh for 2027; Elite Prospects is more cautious at 22nd. The gap between those two rankings is roughly the gap this board is trying to resolve.",
+  gmWhy:"The pick I would defend most comfortably in a room. Youngest 2027-eligible player here, best age-adjusted forward season here, and the tool everyone agrees on — skating — is the one that does not evaporate. That combination means his floor is an NHL bottom-six even in the failure case, which is what separates him from the other high-variance names below. High floor and high ceiling is not a trade-off I have to make with him.",
+  ceilWhy:"The clearest case on the roster. Youngest player in the class, best age-adjusted production among forwards, elite skating, and 174 lb of frame still to fill. Every input the two models take points the same way. Four places up, into third."
+ },
+ {
+  id:"warren", n:"Camryn Warren", pos:"F", posLabel:"LW · Right", grp:"F",
+  ht:"5'10\"", wt:"159 lb", born:"7 May 2009", age:"17", home:"Vaughan, ON",
+  club:"North Bay Battalion (OHL)", prev:"Toronto Jr. Canadiens U16", draft:"2027",
+  cur:85, curRank:8, ceil:84, ceilRank:10, gm:81, gmRank:11,
+  line:"OHL 25-26: 58 GP · 7–22—29 ‖ HGC: 5 GP · 2–5—7",
+  stats:[
+   {s:"2024–25", t:"Toronto Jr. Canadiens (GTHL U16)", gp:33, g:24, a:39, p:63, pim:24},
+   {s:"2025–26", t:"North Bay (OHL)", gp:58, g:7, a:22, p:29, pim:16, hl:true},
+   {s:"2025–26", t:"Canada Red U17 (WHC-17)", gp:5, g:4, a:3, p:7, pim:2},
+   {s:"2026", t:"Canada U18 (Hlinka)", gp:5, g:2, a:5, p:7, pim:0, hl:true}
+  ],
+  tools:[["Skating",9],["Shot",6],["Hockey sense",8],["Compete",9],["Physicality",4]],
+  flags:[["pos","Maturity upside"],["neg","Pedigree premium"],["neg","Goals haven't translated"]],
+  s:[
+   "Straight-line speed that \"immediately pops,\" with scouts projecting the skating as a 7-plus grade — a top-of-league tool at maturity.",
+   "The motor is the other calling card: \"ridiculous,\" and \"he'll never be outworked.\" He plays at a manic pace and wins races he has no business winning.",
+   "OHL Cup MVP and first overall in the OHL Priority Selection — he has been the best player in every room he has been in until now.",
+   "Held a top-line role at the Hlinka alongside Schultz and Pue and produced seven points without looking out of place."
+  ],
+  w:[
+   "Twenty-nine points in 58 OHL games — 0.50 per game — is ordinary production for a player ranked tenth in his draft class. The ranking is running well ahead of the output.",
+   "Seven goals after 24 in U16. The finishing has not travelled up a level at all, and that is the specific skill that separates a scoring winger from a fourth-liner.",
+   "159 lb. He is dynamic in space and consistently removed from pucks in traffic.",
+   "The Hockey News' post-tournament read was blunt: he \"looks unlikely to end up a top-32 pick in the draft.\""
+  ],
+  comp:"A speed-and-motor middle-six winger. The upside case needs the goal-scoring to reappear; the base case is a penalty-kill and pace role.",
+  curWhy:"Elite Prospects has him tenth for 2027 — a ranking clearly built on pedigree, tools and OHL Cup dominance rather than on his rookie point total.",
+  gmWhy:"The hardest player on this board to place. The maturity model likes him at 159 pounds and the skating grade is legitimate, but the asymmetric test is unforgiving about cases built on pedigree — and OHL Cup MVP plus a first-overall selection is doing more work here than 29 points in 58 games should allow. Seven goals after 24 in U16 is the number that decides it. Three down, and next season's goal total settles the argument entirely.",
+  ceilWhy:"An unusual split. The maturity model likes him a lot at 159 lb; the production model does not like 0.50 P/GP from a mid-cohort May birthday. The two roughly cancel and he holds his position. Watch the goal total next season — it is the whole argument."
+ },
+ {
+  id:"stroeder", n:"Kayden Stroeder", pos:"F", posLabel:"C · Left", grp:"F",
+  ht:"5'10\"", wt:"150 lb", born:"1 March 2009", age:"17", home:"Saskatoon, SK",
+  club:"Edmonton Oil Kings (WHL)", prev:"Saskatoon Contacts U18 AAA", draft:"2027",
+  cur:84, curRank:9, ceil:89, ceilRank:6, gm:87, gmRank:7,
+  line:"WHL 25-26: 55 GP · 13–19—32 ‖ HGC: 5 GP · 4–5—9",
+  stats:[
+   {s:"2023–24", t:"Humboldt Broncos (SAAHL U15)", gp:27, g:58, a:69, p:127, pim:56},
+   {s:"2024–25", t:"Saskatoon Contacts (U18 AAA)", gp:40, g:25, a:35, p:60, pim:62},
+   {s:"2024–25", t:"Edmonton (WHL)", gp:16, g:5, a:3, p:8, pim:2},
+   {s:"2025–26", t:"Edmonton (WHL)", gp:55, g:13, a:19, p:32, pim:22, hl:true},
+   {s:"2025–26", t:"Canada White U17 (WHC-17)", gp:5, g:1, a:5, p:6, pim:14},
+   {s:"2026", t:"Canada U18 (Hlinka)", gp:5, g:4, a:5, p:9, pim:6, hl:true}
+  ],
+  tools:[["Skating",8],["Shot",8],["Hockey sense",8],["Compete",8],["Physicality",3]],
+  flags:[["pos","Maturity upside — largest on board"],["neg","Frame risk"],["neg","Q1 birth"],["pos","Market lag"]],
+  s:[
+   "One hundred and fifty pounds, and still 0.58 points per game in the WHL. That is the most extreme production-per-pound case on this roster by a distance.",
+   "Outstanding skater who shoots from anywhere and runs a power play — scouts singled out his willingness to shoot and his vision with the man advantage.",
+   "Got measurably better every game in Edmonton, finishing with nine points and a point in every round-robin game. One scout's summary: \"I could see him going in the first round.\"",
+   "The junior scoring history is absurd — 127 points in 27 games at U15, then 60 in 40 at U18 AAA before the WHL took over."
+  ],
+  w:[
+   "150 lb is a durability question, not a projection footnote. Junior seasons are 68 games and the WHL travels.",
+   "A 1 March birthday removes the relative-age tailwind entirely — he is old within the class and small within it, an unusual combination.",
+   "He wins pucks with skill and never with body. Nothing in his game currently survives being physically matched.",
+   "Not in Elite Prospects' top 64. The market has not caught up, which means the upside is real and the risk is genuinely unpriced."
+  ],
+  comp:"The successful strength curve is Logan Stankoven's. The failure mode is a skilled junior scorer who never adds the 40 lb the projection requires.",
+  curWhy:"Unranked on the major boards going in; the tournament changed that conversation, with first-round talk emerging directly out of Edmonton. Ninth here reflects a reputation that is climbing fast from a low base.",
+  gmWhy:"One hundred and fifty pounds is the scariest number on this board and I am still taking him seventh. Producing 0.58 points per game in the WHL at that mass implies a skill level actively suppressed by strength — and strength is the one deficiency that reliably resolves itself. The Q1 birthday is why he is seventh rather than fifth. The durability question is real and I am accepting it with my eyes open.",
+  ceilWhy:"The maturity model's single loudest signal on this roster. Producing at 0.58 P/GP in the WHL at 150 lb implies a skill level that is currently being suppressed by mass, and mass is the one thing that reliably arrives. Q1 birthday holds him out of the top five."
+ },
+ {
+  id:"chitaroni", n:"Brock Chitaroni", pos:"F", posLabel:"RW · Right", grp:"F",
+  ht:"5'11\"", wt:"176 lb", born:"27 January 2009", age:"17", home:"Marathon, ON",
+  club:"Ottawa 67's (OHL)", prev:"Barrie Colts U16 AAA", draft:"2027",
+  cur:83, curRank:10, ceil:76, ceilRank:17, gm:69, gmRank:21,
+  line:"OHL 25-26: 60 GP · 10–14—24 ‖ HGC: 5 GP · 0–0—0",
+  stats:[
+   {s:"2024–25", t:"Barrie Colts (OMHA U16)", gp:31, g:29, a:30, p:59, pim:16},
+   {s:"2025–26", t:"Ottawa (OHL)", gp:60, g:10, a:14, p:24, pim:10, hl:true},
+   {s:"2025–26", t:"Canada White U17 (WHC-17)", gp:5, g:3, a:3, p:6, pim:0},
+   {s:"2026", t:"Canada U18 (Hlinka)", gp:5, g:0, a:0, p:0, pim:0, hl:true}
+  ],
+  tools:[["Skating",9],["Shot",6],["Hockey sense",6],["Compete",7],["Physicality",5]],
+  flags:[["neg","Oldest player on roster"],["neg","Production / ranking mismatch"],["neu","Elite skating tool"]],
+  s:[
+   "\"Some of the best skating mechanics in the draft\" — explosive first three steps, and separation speed he can access from a standstill.",
+   "Strong puck pursuit and retrieval. He forechecks hard and gets to loose pucks first more often than anyone else on this roster.",
+   "Accepts checking assignments without complaint and throws checks — scouts note he adapts to whatever role he is given.",
+   "Six points in five games at the U17 World Challenge shows the offence exists in the right environment."
+  ],
+  w:[
+   "Born 27 January 2009 — the oldest player on this roster — and he produced 0.40 points per game in the OHL. Age-adjusted, that is the weakest forward season among the ranked names here.",
+   "Scouts describe the elite flashes as exactly that: the ability \"mostly came in flashes\" rather than sustained shifts.",
+   "Held without a goal in five Hlinka games and outside Canada's published top 15 scorers. When he isn't on a scoring line, the offensive impact does not survive.",
+   "Elite Prospects ranks him 16th for 2027. Nothing in his statistical record supports a top-20 placement in a class where he is the oldest player available."
+  ],
+  comp:"A Brandon Tanev-type speed-and-pressure winger. The tools point at a top-six role and the results point at a fourth line.",
+  curWhy:"Sixteenth on Elite Prospects' 2027 board, carried almost entirely by the skating grade and U16 pedigree.",
+  gmWhy:"The board's biggest faller, tenth to twenty-first, and the philosophy is unambiguous about why. He is the oldest player on this roster and he produced 0.40 points per game — the weakest age-adjusted forward season among the ranked names here. His entire case is a skating grade, scouts describe the impact as arriving in flashes, and he did not score in five games in Edmonton. Elite Prospects has him sixteenth in the class. A tools-only case attached to the oldest player available is exactly the pick that gets people fired.",
+  ceilWhy:"The largest downgrade on this board, and the most straightforward. The oldest player in the class producing 0.40 P/GP is the single most reliable red flag in the draft literature — low scorers get drafted about a full draft group too early, and being old for the class compounds it. Seven places down."
+ },
+ {
+  id:"tait", n:"Boston Tait", pos:"D", posLabel:"D · Left", grp:"D",
+  ht:"6'2\"", wt:"183 lb", born:"13 April 2009", age:"17", home:"Estevan, SK",
+  club:"Wenatchee Wild (WHL)", prev:"Regina Pat Canadians U18 AAA", draft:"2027",
+  cur:82, curRank:11, ceil:79, ceilRank:14, gm:77, gmRank:14,
+  line:"WHL 25-26: 62 GP · 5–18—23 ‖ HGC: 5 GP · 0–3—3",
+  stats:[
+   {s:"2024–25", t:"Regina Pat Canadians (U18 AAA)", gp:41, g:3, a:20, p:23, pim:22},
+   {s:"2024–25", t:"Wenatchee (WHL)", gp:6, g:0, a:2, p:2, pim:2},
+   {s:"2025–26", t:"Wenatchee (WHL)", gp:62, g:5, a:18, p:23, pim:55, hl:true},
+   {s:"2025–26", t:"Canada Red U17 (WHC-17)", gp:5, g:0, a:6, p:6, pim:0},
+   {s:"2026", t:"Canada U18 (Hlinka)", gp:5, g:0, a:3, p:3, pim:0, hl:true}
+  ],
+  tools:[["Skating",7],["Shot",5],["Hockey sense",7],["Compete",8],["Physicality",7]],
+  flags:[["neu","Defence-first profile"],["neg","No age or maturity tailwind"]],
+  s:[
+   "Defends the rush properly — right posture, safe gap, and enough lateral power to \"lock up the rush\" without reaching.",
+   "6'2\" with a genuine edge; 55 penalty minutes says he engages rather than manages.",
+   "More offence than the totals suggest: six assists in five games at the U17 World Challenge, and three more in five at the Hlinka.",
+   "Consistently described as composed and unshakeable under forechecking pressure — he manages the game rather than reacting to it."
+  ],
+  w:[
+   "0.37 points per game is modest production for a defenceman ranked inside the top 20 of his class.",
+   "Scouts note the obvious: in all-star settings he \"might not be the player that jumps off the screen,\" and blends in beside flashier partners.",
+   "The offensive tools support play rather than drive it. He is unlikely to ever run a power play.",
+   "A mid-April birthday and a largely filled 183 lb frame give him neither the relative-age nor the maturity-headroom advantage that lifts the players around him."
+  ],
+  comp:"A second-pair, penalty-kill-first defender — solid, projectable, and unlikely to be a difference-maker.",
+  curWhy:"Daily Faceoff has him 20th for 2027; Elite Prospects leaves him outside the top 64. He is the roster's clearest example of a defence-first defenceman being valued differently by different evaluators.",
+  gmWhy:"Genuinely the safest skater in this range, and that is precisely why he does not rise. He defends the rush properly, he has size and an edge, and his floor is real. But the payoff is a second-pair defenceman who scouts say does not jump off the screen, and the asymmetric test says take the variance when the conservative option's ceiling is this modest. He is the player I pass on in order to take Cripps.",
+  ceilWhy:"Nothing here is wrong, but nothing is undervalued either. Neither model finds a hidden edge — no late birthday, no strength runway, no age-adjusted production surplus. Three places down purely because others move past him."
+ },
+ {
+  id:"edgar", n:"Ryerson Edgar", pos:"F", posLabel:"C · Right", grp:"F",
+  ht:"5'10\"", wt:"161 lb", born:"30 July 2009", age:"17", home:"Holland Landing, ON",
+  club:"Niagara IceDogs (OHL)", prev:"Univ. of Michigan commit", draft:"2027",
+  cur:81, curRank:12, ceil:87, ceilRank:8, gm:89, gmRank:6,
+  line:"OHL 25-26: 64 GP · 23–26—49 ‖ HGC: 5 GP · 3–2—5",
+  stats:[
+   {s:"2025–26", t:"Niagara (OHL)", gp:64, g:23, a:26, p:49, pim:18, hl:true},
+   {s:"2025–26", t:"Canada U17 (WHC-17)", gp:5, g:"—", a:"—", p:"—", pim:"—"},
+   {s:"2026", t:"Canada U18 (Hlinka)", gp:5, g:3, a:2, p:5, pim:6, hl:true}
+  ],
+  tools:[["Skating",9],["Shot",7],["Hockey sense",8],["Compete",8],["Physicality",4]],
+  flags:[["pos","Late birthday"],["pos","Maturity upside"],["pos","Market lag"],["neg","Frame risk"]],
+  s:[
+   "Led all 16-year-olds in OHL scoring with 49 points — 0.77 per game — and made the OHL's Second All-Rookie Team.",
+   "Born 30 July, which means that production came from one of the youngest players in the entire 2027 class. Age-adjusted, only England beats it among forwards here.",
+   "Elite edges and \"smart skating patterns\" — scouts describe him orchestrating rush sequences rather than just participating in them.",
+   "Twenty-three goals says the finishing is real, and the defensive detail is genuine: \"always in the right spot supporting or extending plays.\""
+  ],
+  w:[
+   "161 lb. He gets moved off pucks in traffic and will find the men's game a harder environment than the OHL was.",
+   "Daily Faceoff has him 26th and Elite Prospects leaves him out of the top 64 — a gap that is hard to reconcile with leading his age group in OHL scoring, unless scouts see a hard physical ceiling.",
+   "The tournament line was modest by his standards: five points in a deep forward group, mostly in a secondary role.",
+   "Committed to Michigan, which means a future season where the raw totals will look worse before they look better."
+  ],
+  comp:"A right-shot second-line centre in the Wyatt Johnston band if the strength arrives; a skilled winger who gets pushed to the perimeter if it doesn't.",
+  curWhy:"Ranked at the back of the first round by Daily Faceoff and unranked by Elite Prospects. Twelfth here reflects a player the market has noticed but not properly priced.",
+  gmWhy:"Six places up, and the name I would be most annoyed to lose. Every element of his case is evidence rather than tools: he led all sixteen-year-olds in OHL scoring, he did it on a July 30 birthday, and he scored 23 goals doing it. Consensus has him 26th or unranked, so I could plausibly get him a full round later than he deserves. When the evidence is this clean and the price is this low, hesitation is the expensive choice.",
+  ceilWhy:"A textbook underrated profile: late-July birthday, best-in-cohort OHL production, elite skating, and 161 lb of unfilled frame. Four places up, and arguably the clearest disagreement between this board and consensus after England."
+ },
+ {
+  id:"litalien", n:"Malik L'Italien", pos:"D", posLabel:"D · Left", grp:"D",
+  ht:"6'3\"", wt:"187 lb", born:"10 June 2009", age:"17", home:"Montréal, QC",
+  club:"Halifax Mooseheads (QMJHL)", prev:"—", draft:"2027",
+  cur:80, curRank:13, ceil:78, ceilRank:15, gm:75, gmRank:16,
+  line:"QMJHL 25-26: 64 GP · 4–20—24 ‖ HGC: 5 GP · 1–2—3",
+  stats:[
+   {s:"2025–26", t:"Halifax (QMJHL)", gp:64, g:4, a:20, p:24, pim:28, hl:true},
+   {s:"2026", t:"Canada U18 (Hlinka)", gp:5, g:1, a:2, p:3, pim:2, hl:true}
+  ],
+  tools:[["Skating",8],["Shot",6],["Hockey sense",6],["Compete",7],["Physicality",7]],
+  flags:[["neg","Maturity flag"],["neg","Decision-making"],["pos","Skating at size"]],
+  s:[
+   "\"A deep, powerful mover, especially forward and backward\" at 6'3\" — the skating-at-size combination that teams pay a premium for.",
+   "Activates into the offensive zone with confidence, attacking \"runways of space\" rather than waiting to be invited.",
+   "Transition-defence details and net-front discipline are already sound, which is unusual in a first-year defenceman.",
+   "QMJHL All-Rookie Team in a full 64-game season, and he paired effectively with DuPont at the tournament."
+  ],
+  w:[
+   "Scouts flag \"uneven decisions with the puck\" and being caught out of position, particularly early in the season. The reads are the tool that decides his role.",
+   "0.375 points per game is thin for a defenceman projected as a top-four piece.",
+   "6'3\" and 187 lb at 17 means much of his current advantage is body, and that advantage narrows every year from here.",
+   "Playing beside DuPont in Edmonton masked some of the decision-making, which makes the tournament sample flattering."
+  ],
+  comp:"A mobile second-pair defenceman with reach. Top-four if the processing improves, third-pair penalty killer if it doesn't.",
+  curWhy:"QMJHL All-Rookie recognition and a 6'3\" left-shot frame with real skating keep him well inside the 2027 conversation without a published top-64 ranking.",
+  gmWhy:"Three down. The skating at 6'3\" is a genuine NHL trait and the QMJHL All-Rookie season is real, but 0.375 points per game is thin for a projected top-four, the decision-making is inconsistent by every account, and at 187 pounds at seventeen a meaningful share of the current advantage is body rather than skill. Playing beside DuPont in Edmonton flattered the sample.",
+  ceilWhy:"The maturity flag applies squarely — big and strong now, at an age where that is a warning rather than a promise — and the hockey sense grade caps the ceiling. Two places down."
+ },
+ {
+  id:"mcaslan", n:"Cooper McAslan", pos:"D", posLabel:"D · Right", grp:"D",
+  ht:"6'1\"", wt:"174 lb", born:"16 March 2009", age:"17", home:"Bowmanville, ON",
+  club:"London Knights (OHL)", prev:"Ajax-Pickering Raiders", draft:"2027",
+  cur:79, curRank:14, ceil:81, ceilRank:12, gm:76, gmRank:15,
+  line:"OHL 25-26: 4 GP · 0–2—2 ‖ HGC: 5 GP · 0–3—3",
+  stats:[
+   {s:"2025–26", t:"London (OHL)", gp:4, g:0, a:2, p:2, pim:2, hl:true},
+   {s:"2025–26", t:"Canada U17 (WHC-17)", gp:5, g:"—", a:"—", p:"—", pim:"—"},
+   {s:"2026", t:"Canada U18 (Hlinka)", gp:5, g:0, a:3, p:3, pim:4, hl:true}
+  ],
+  tools:[["Skating",7],["Shot",5],["Hockey sense",7],["Compete",7],["Physicality",6]],
+  flags:[["neg","Sample-size risk — highest"],["pos","Maturity upside"],["neu","Right-shot defenceman"]],
+  s:[
+   "A right-shot 6'1\" defenceman with genuine fluidity and mobility — the scarcest combination of attributes in the sport.",
+   "Scouts came away from Edmonton impressed: \"McAslan has so many NHL qualities. The defensive game already looks quite promising.\"",
+   "Three assists in five tournament games with essentially no top-junior track record behind him — he made the team on tools and held a real role.",
+   "Developed through London's Jr. A and Jr. B system, which is the most productive development pipeline in Canadian junior hockey."
+  ],
+  w:[
+   "Four OHL games. There is almost nothing to evaluate against, and tools-based projection without production is precisely the evaluation mode that generates the biggest errors.",
+   "A mid-March birthday means he is old within the class, without a body of work to justify it.",
+   "The offensive upside is entirely unproven — nobody knows whether it exists.",
+   "Breaking into London's blue line is genuinely hard. Another season of limited minutes would leave him invisible to scouts through his draft year."
+  ],
+  comp:"A right-shot shutdown defenceman on a slow development curve. Every projection here is provisional until there is a real season of tape.",
+  curWhy:"Named a tournament riser by The Hockey News on the strength of his defensive maturity, but with four OHL games he has no ranking to speak of.",
+  gmWhy:"Four OHL games. The philosophy punishes cases built on tools alone and his is one — but there is a distinction worth drawing between bad evidence and absent evidence, and his is absent. A right-shot 6'1\" defenceman with real mobility is scarce, and three assists in five Hlinka games with no track record behind him is not nothing. I cannot stake a job on this, so he sits mid-board until London gives him a real season.",
+  ceilWhy:"A small move up, driven by the frame at 174 lb and by the fact that a four-game sample is an absence of evidence rather than evidence of absence. This is the roster's widest confidence interval after the goaltenders."
+ },
+ {
+  id:"murata", n:"Charlie Murata", pos:"F", posLabel:"F · Right", grp:"F",
+  ht:"6'0\"", wt:"183 lb", born:"15 February 2009", age:"17", home:"Toronto, ON",
+  club:"Flint Firebirds (OHL)", prev:"Michigan State commit", draft:"2027",
+  cur:78, curRank:15, ceil:72, ceilRank:21, gm:68, gmRank:22,
+  line:"OHL 25-26: 59 GP · 5–13—18 ‖ HGC: 5 GP · 0–2—2",
+  stats:[
+   {s:"2024–25", t:"Don Mills Flyers (U16 AAA)", gp:76, g:50, a:47, p:97, pim:26},
+   {s:"2025–26", t:"Flint (OHL)", gp:59, g:5, a:13, p:18, pim:12, hl:true},
+   {s:"2025–26", t:"Canada Red U17 (WHC-17)", gp:5, g:4, a:6, p:10, pim:6},
+   {s:"2026", t:"Canada U18 (Hlinka)", gp:5, g:0, a:2, p:2, pim:4, hl:true}
+  ],
+  tools:[["Skating",8],["Shot",6],["Hockey sense",7],["Compete",8],["Physicality",6]],
+  flags:[["neg","Q1 birth"],["neg","Age-group production collapse"],["neg","Maturity flag"]],
+  s:[
+   "\"His pace and motor have come so far in such a short time\" — the skating is high-end and improving, with efficient crossovers and deceptive puck posture.",
+   "Ten points in five games at the U17 World Challenge, which proves the offence exists when the environment suits him.",
+   "Physical and reliable on the backcheck; scouts note he stays useful even in games where nothing goes in.",
+   "Moved from the fourth line to the second line during the tournament and handled the promotion without looking overmatched."
+  ],
+  w:[
+   "This is the roster's clearest cautionary case. Ninety-seven points in U16, then 18 in 59 OHL games — 0.31 per game, a fourth-line rate, in his draft-minus-one season.",
+   "Craig Button ranked him fourth in the 2027 class in November. Elite Prospects now has him 42nd. That is the size of the re-evaluation already underway.",
+   "A 15 February birthday makes him one of the older players in the class, so there is no age discount available to explain the drop.",
+   "Two quiet points at the Hlinka. The U16 explosion increasingly looks like an early-development artifact rather than a skill signal."
+  ],
+  comp:"A checking-line winger with real pace. The U17 tournament version is a middle-six scorer; the OHL version is not.",
+  curWhy:"Still carried by reputation — a top-five ranking as recently as last November, and a Michigan State commitment. Fifteenth here reflects a perception in freefall but not yet at the floor.",
+  gmWhy:"Last, and it is not close. Ninety-seven points in U16 became 18 in 59 OHL games — 0.31 per game, a fourth-line rate, from a February birthday with no age discount available to explain it. Craig Button had him fourth in this class in November; Elite Prospects has him forty-second now. When reputation and evidence point in opposite directions this hard, the evidence is what I am paid to believe. I would not spend a pick on him at all.",
+  ceilWhy:"Both models agree and neither is kind. Q1 birthday, production collapse on the step up, and a physically average-to-mature frame at 17. The Swedish maturation data describes this exact pattern: dominance in age-group hockey that evaporates once peers catch up. Six places down."
+ },
+ {
+  id:"henderson", n:"Matthew Henderson", pos:"D", posLabel:"D · Left", grp:"D",
+  ht:"6'0\"", wt:"168 lb", born:"20 March 2009", age:"17", home:"Sarnia, ON",
+  club:"Kingston Frontenacs (OHL)", prev:"Huron-Perth Lakers U16 AAA", draft:"2027",
+  cur:77, curRank:16, ceil:82, ceilRank:11, gm:82, gmRank:10,
+  line:"OHL 25-26: 63 GP · 2–16—18 ‖ HGC: 5 GP · 0–0—0",
+  stats:[
+   {s:"2024–25", t:"Huron-Perth Lakers (ALLIANCE U16)", gp:30, g:6, a:20, p:26, pim:4},
+   {s:"2025–26", t:"Kingston (OHL)", gp:63, g:2, a:16, p:18, pim:24, hl:true},
+   {s:"2025–26", t:"Canada White U17 (WHC-17)", gp:5, g:1, a:5, p:6, pim:2},
+   {s:"2026", t:"Canada U18 (Hlinka)", gp:5, g:0, a:0, p:0, pim:2, hl:true}
+  ],
+  tools:[["Skating",9],["Shot",4],["Hockey sense",8],["Compete",7],["Physicality",5]],
+  flags:[["pos","Maturity upside"],["neg","Q1 birth"],["neg","No offensive weapon"]],
+  s:[
+   "\"An elite skater with two-way ability\" with exceptional four-way mobility and a quick first step — the most valuable single tool a defenceman can have.",
+   "He \"manages the OHL game like a veteran\" at 16, which is the rarest quality in a first-year defenceman and the one that most reliably survives to the professional level.",
+   "\"Essentially a puck-moving machine\" — clean breakouts, accurate outlets, and composure under forechecking pressure.",
+   "Six points in five games at the U17 World Challenge showed the offensive tools exist when he is asked to use them."
+  ],
+  w:[
+   "Eighteen points in 63 OHL games. The shot is a non-factor — two goals all season — and there is no obvious route to power-play minutes.",
+   "168 lb at 6'0\" means he can be leaned on in front of his own net, and he currently defends by positioning rather than by removing people.",
+   "A 20 March birthday puts him on the older side of the class without production to match.",
+   "Pointless at the Hlinka in a strictly defensive role — he was used, correctly, as a stabiliser rather than a contributor."
+  ],
+  comp:"A mobile, defence-first top-four defenceman. The offence is the variable; the skating and reads are the floor.",
+  curWhy:"No published ranking of note — 18 points does not draw attention. Sixteenth here reflects strong scouting language attached to weak counting stats.",
+  gmWhy:"Six places up, on a philosophy that rewards durable traits over counting stats. Eighteen points in 63 games is weak and I am not pretending otherwise. But elite four-way mobility and a sixteen-year-old who manages an OHL game like a veteran are the two things that survive the jump to men's hockey, and a 6'0\" 168-pound defenceman has obvious strength to add. His floor is high enough that the absent shot caps the payoff without threatening the pick.",
+  ceilWhy:"Five places up, on the maturity model almost alone. A 6'0\" 168 lb defenceman is a classic late-filling frame, and veteran-level game management at 16 is a trait that ages well. The Q1 birthday and absent shot keep him out of the top ten."
+ },
+ {
+  id:"kulemin", n:"Aleks Kulemin", pos:"F", posLabel:"C · Left", grp:"F",
+  ht:"6'2\"", wt:"183 lb", born:"20 March 2009", age:"17", home:"Woodbridge, ON",
+  club:"Kingston Frontenacs (OHL)", prev:"Don Mills Flyers U16 AAA", draft:"2027",
+  cur:76, curRank:17, ceil:73, ceilRank:20, gm:72, gmRank:18,
+  line:"OHL 25-26: 57 GP · 11–20—31 ‖ HGC: 5 GP · 0–0—0",
+  stats:[
+   {s:"2024–25", t:"Don Mills Flyers (U16 AAA)", gp:69, g:24, a:43, p:67, pim:20},
+   {s:"2025–26", t:"Kingston (OHL)", gp:57, g:11, a:20, p:31, pim:22, hl:true},
+   {s:"2025–26", t:"Canada White U17 (WHC-17)", gp:5, g:2, a:2, p:4, pim:0},
+   {s:"2026", t:"Canada U18 (Hlinka)", gp:5, g:0, a:0, p:0, pim:2, hl:true}
+  ],
+  tools:[["Skating",6],["Shot",7],["Hockey sense",7],["Compete",8],["Physicality",8]],
+  flags:[["neg","Size premium"],["neg","Q1 birth"],["neg","Maturity flag"],["neu","Scouts bullish"]],
+  s:[
+   "Scouts are unusually direct about him: \"already an easy NHL projection,\" with \"a path to becoming a two-way, top-nine NHL centre.\"",
+   "Genuine defensive centre habits — he sticks with his check, and has the awareness to catch passes in traffic and keep plays alive.",
+   "A deft finisher with higher-level playmaking ideas, including breakaway snipes that suggest real hands for his size.",
+   "6'2\" centre who plays inside rather than drifting to the perimeter, and 31 points in a full OHL rookie season is respectable."
+  ],
+  w:[
+   "Much of the scouting enthusiasm is frame-driven — \"a relative giant,\" \"clearly the biggest player on the ice.\" That language describes a body advantage, not a skill advantage.",
+   "0.54 points per game is fine and unremarkable, and it comes from a March-born player who is old within his class.",
+   "Skating is the limiting tool. At 6'2\" with an average stride, the pace question only gets harder from here.",
+   "Pointless in five Hlinka games, in a bottom-six role, against the best of his age group."
+  ],
+  comp:"A third-line matchup centre. The bullish read is a Barrett Hayton-style two-way middle-six; the base case is a fourth-line role.",
+  curWhy:"No top-64 ranking, but the scouting write-ups are among the most confident on this roster — that confidence is what puts him seventeenth rather than lower.",
+  gmWhy:"The safe pick that is not safe. Scouts are more confident about him than anyone else in this range — \"already an easy NHL projection\" — and almost all of that confidence traces back to him being \"clearly the biggest player on the ice.\" Hockey Graphs identifies that as the specific bias that costs teams picks. His 0.54 points per game is better evidence than anyone below him has, which is why he does not fall further, but low variance around a third-line outcome is not what I am drafting for.",
+  ceilWhy:"Three places down, and the reasoning is the model's core claim. Hockey Graphs' finding is that scouts overvalue size and non-scoring traits in prospects who have not demonstrated scoring, and the Swedish maturation study says the 6'2\"/183 17-year-old is exactly who gets over-selected at this stage. Not a bust call — a ceiling call."
+ },
+ {
+  id:"veitch", n:"Benjamin Veitch", pos:"F", posLabel:"C · Left", grp:"F",
+  ht:"6'3\"", wt:"201 lb", born:"11 October 2009", age:"16", home:"St. John's, NL",
+  club:"Newfoundland Regiment (QMJHL)", prev:"St. Andrew's College", draft:"2028",
+  cur:75, curRank:18, ceil:75, ceilRank:18, gm:71, gmRank:19,
+  line:"QMJHL 25-26: 58 GP · 11–10—21 ‖ HGC: 5 GP · 5–2—7",
+  stats:[
+   {s:"2023–24", t:"Eastern Hitmen (NLAAAHL U15)", gp:28, g:46, a:38, p:84, pim:38},
+   {s:"2024–25", t:"York Simcoe Express (OMHA U16)", gp:29, g:21, a:21, p:42, pim:42},
+   {s:"2025–26", t:"Newfoundland (QMJHL)", gp:58, g:11, a:10, p:21, pim:31, hl:true},
+   {s:"2025–26", t:"Canada Red U17 (WHC-17)", gp:5, g:2, a:0, p:2, pim:6},
+   {s:"2026", t:"Canada U18 (Hlinka)", gp:5, g:5, a:2, p:7, pim:0, hl:true}
+  ],
+  tools:[["Skating",6],["Shot",7],["Hockey sense",6],["Compete",9],["Physicality",9]],
+  flags:[["pos","2028 eligible"],["neg","Maturity flag — most extreme"],["neg","Thin junior production"]],
+  s:[
+   "Five goals in five Hlinka games as one of the youngest forwards on the team, and a goal in the gold-medal game.",
+   "Scouts describe a genuine physical force: \"Veitch was a menace — again. His physical game was overwhelming at times.\"",
+   "Real power-forward habits — good timing on the forecheck, hits hard, and \"plays his checking role to perfection\" without disappearing offensively.",
+   "October 2009 birthday makes him 2028-eligible, giving him a full extra development year before scouts have to commit."
+  ],
+  w:[
+   "6'3\" and 201 lb at 16 is the most physically mature profile on this roster. The Swedish maturation data is unambiguous about what typically happens to that advantage.",
+   "0.36 points per game in the QMJHL is thin. His junior scoring drops sharply at each step up: 84 points at U15, 42 at U16, 21 in the Q.",
+   "The tournament goals came largely off other players' work, on a team that scored 34 times in five games.",
+   "Both the skating and the hockey sense need real improvement for the projection to hold, and neither is currently trending fast."
+  ],
+  comp:"A bottom-six power forward. The physical game is NHL-calibre already; whether the skill catches up to it is the entire question.",
+  curWhy:"A tournament standout with five goals, and the 2028 eligibility means expectations are calibrated generously. Eighteenth reflects a player noticed in Edmonton but not yet on draft boards.",
+  gmWhy:"The 2028 eligibility is a real credit and five goals in five games is a real result. But 6'3\" and 201 pounds at sixteen is the most extreme maturity flag on this roster, his junior scoring has dropped at every single step up — 84 points at U15, 42 at U16, 21 in the Q — and the tournament goals came on a team that scored 34 times in five games. Physicality-led profiles convert badly once the body advantage normalises.",
+  ceilWhy:"He holds his position, which is itself a statement: the 2028 age credit is real, and it exactly offsets the most extreme maturity flag on the roster. Physicality-led profiles convert poorly once the body advantage normalises — that is the whole risk here."
+ },
+ {
+  id:"oaten", n:"Leif Oaten", pos:"G", posLabel:"G · Left", grp:"G",
+  ht:"6'3\"", wt:"194 lb", born:"3 October 2009", age:"16", home:"Calgary, AB",
+  club:"Lethbridge Hurricanes (WHL)", prev:"Edge School (CSSHL U18)", draft:"2028",
+  cur:74, curRank:19, ceil:74, ceilRank:19, gm:74, gmRank:17,
+  line:"WHL 25-26: 31 GP · 4.23 GAA · .876 SV% ‖ HGC: 4 GP · 2.25 · .890",
+  goalie:true,
+  stats:[
+   {s:"2024–25", t:"Edge School (CSSHL U18)", gp:19, g:"2.42", a:".922", p:"11-7-1", pim:2},
+   {s:"2025–26", t:"Lethbridge (WHL)", gp:31, g:"4.23", a:".876", p:"6-19-2", pim:1, hl:true},
+   {s:"2025–26", t:"Canada Red U17 (WHC-17)", gp:4, g:"2.95", a:".905", p:"—", pim:0},
+   {s:"2026", t:"Canada U18 (Hlinka)", gp:4, g:"2.25", a:".890", p:"—", pim:0, hl:true}
+  ],
+  goalieCols:["GP","GAA","SV%","W-L-T","SO"],
+  tools:[["Athleticism",7],["Technique",8],["Tracking",6],["Compete",7],["Puckhandling",6]],
+  flags:[["neu","Goaltender variance"],["neg","Weak club results"],["pos","2028 eligible"]],
+  s:[
+   "6'3\" with a controlled, technical base — the scouting note from Edmonton was that he \"exuded technical prowess\" even in games where he saw little work.",
+   "Carried a 31-game starter's load in the WHL at 16, which is unusually heavy for a goaltender that age.",
+   "Won the crease outright on a gold-medal team, played four of five games, and started the final.",
+   "October 2009 birthday makes him 2028-eligible — two more development years before anyone has to draft him."
+  ],
+  w:[
+   ".876 in the WHL is poor in absolute terms. Team context matters behind a 6-19-2 record, but 16-year-old goaltenders posting sub-.880 rarely reverse it quickly.",
+   "He faced 16 shots in an 8-1 gold-medal game and spent long stretches \"simply watching while Canada dominated.\" The tournament sample tells you very little.",
+   "Tracking through traffic is the tool that needs the most work, and it is the hardest one to fix.",
+   "Goaltender projection at 16 is close to noise. Any confident ranking here — high or low — is overstating what is knowable."
+  ],
+  comp:"A large, technically sound junior starter. The distribution of outcomes for this profile is enormous and genuinely bimodal.",
+  curWhy:"Started and won a gold-medal game, which is the most visible thing a young goaltender can do — and a .876 WHL season, which is the least. Nineteenth splits that difference.",
+  gmWhy:"Up two places, and behind Berthiaume — a correction to my own ceiling board rather than a demotion of the player. He owns the one thing Berthiaume does not: proof he can carry a CHL starter's workload at sixteen. But .876 is not a floor, it is a warning, and his save percentage curve bends the wrong way at exactly the moment it should be climbing. Winning the Hlinka crease was a workload decision by a staff picking for five games, and he faced sixteen shots in the final.",
+  ceilWhy:"Flat, and now behind Berthiaume — a correction to an earlier version of this board that had the two goaltenders the wrong way round. His ceiling is real: 6'3\", a technical base scouts rate highly, and two more seasons before the 2028 draft. But a ceiling sort has to read the trajectory, and his save percentage fell from .922 in prep to .876 at his first real test. That is the wrong direction at the wrong moment."
+ },
+ {
+  id:"harvey", n:"Ben Harvey", pos:"F", posLabel:"F · Right", grp:"F",
+  ht:"5'11\"", wt:"183 lb", born:"6 August 2009", age:"17", home:"Edmonton, AB",
+  club:"Prince Albert Raiders (WHL)", prev:"Edmonton Jr. Oilers U18 AAA", draft:"2027",
+  cur:73, curRank:20, ceil:80, ceilRank:13, gm:78, gmRank:13,
+  line:"WHL 25-26: 45 GP · 14–13—27 ‖ HGC: 5 GP · 0–0—0",
+  stats:[
+   {s:"2024–25", t:"Edmonton Jr. Oilers (AEHL U18)", gp:30, g:16, a:20, p:36, pim:26},
+   {s:"2024–25", t:"Prince Albert (WHL)", gp:6, g:0, a:1, p:1, pim:2},
+   {s:"2025–26", t:"Prince Albert (WHL)", gp:45, g:14, a:13, p:27, pim:12, hl:true},
+   {s:"2025–26", t:"Canada White U17 (WHC-17)", gp:5, g:1, a:1, p:2, pim:0},
+   {s:"2026", t:"Canada U18 (Hlinka)", gp:5, g:0, a:0, p:0, pim:2, hl:true}
+  ],
+  tools:[["Skating",7],["Shot",7],["Hockey sense",7],["Compete",8],["Physicality",6]],
+  flags:[["pos","Late birthday"],["pos","Market blind spot"],["neg","No elite tool"],["neg","Short sample"]],
+  s:[
+   "0.60 points per game as a 16-year-old WHL rookie — right at the threshold the analytics literature treats as the meaningful line for junior forwards.",
+   "Born 6 August 2009, placing him in the narrow late-summer band that the draft research identifies as the most systematically undervalued in the sport.",
+   "Real skill flashes on entries: \"he entered wide, delayed, and connected a pass.\" He hunts favourable ice rather than skating into checks.",
+   "Works the boards and the net-front consistently — scouts note perimeter battles, board crashes and a willingness to sprint back."
+  ],
+  w:[
+   "Pointless in five Hlinka games and used in a bottom-six role — he did nothing in Edmonton to force anyone's attention.",
+   "No public ranking has him anywhere. Being unranked is not itself an argument, but it means there is no external check on this evaluation.",
+   "Forty-five games is a shorter sample than his peers, which makes the per-game rate less reliable.",
+   "Nothing in the toolkit grades as elite. The entire case is age-adjusted production, and that case is fragile if the production doesn't repeat."
+  ],
+  comp:"A middle-six two-way winger. Unspectacular in every individual respect, and priced as though the production didn't happen.",
+  curWhy:"Twentieth reflects reality: no ranking, no tournament production, and a solid but unnoticed WHL rookie season on a non-contending team.",
+  gmWhy:"Seven places up, and completely unranked publicly — which is the point. His downside is identical to everyone else's in this range, a WHL forward who does not make it, while his evidence is better than most of theirs: 0.60 points per game at sixteen, from an August 6 birthday. Deaner's finding was that this exact profile needs to be drafted 40 to 45 slots earlier to be priced correctly. The absence of an elite tool is what keeps him thirteenth rather than higher.",
+  ceilWhy:"The board's biggest riser, at seven places. An August 6 birthday combined with 0.60 P/GP in the WHL is precisely the profile Deaner et al. showed needs to be drafted 40–45 slots earlier to be valued correctly. He is the purest test of whether the age-adjusted model is right."
+ },
+ {
+  id:"norman", n:"Quinn Norman", pos:"D", posLabel:"D · Left", grp:"D",
+  ht:"6'0\"", wt:"165 lb", born:"22 December 2009", age:"16", home:"St. John's, NL",
+  club:"Newfoundland Regiment (QMJHL)", prev:"Boston University commit", draft:"2028",
+  cur:72, curRank:21, ceil:71, ceilRank:22, gm:70, gmRank:20,
+  line:"QMJHL 25-26: 58 GP · 1–12—13 ‖ HGC: 5 GP · 0–0—0",
+  stats:[
+   {s:"2023–24", t:"Eastern Hitmen (NLAAAHL U15)", gp:28, g:19, a:29, p:48, pim:8},
+   {s:"2024–25", t:"Vaughan Kings (GTHL U16)", gp:33, g:6, a:18, p:24, pim:14},
+   {s:"2025–26", t:"Newfoundland (QMJHL)", gp:58, g:1, a:12, p:13, pim:14, hl:true},
+   {s:"2025–26", t:"Canada Red U17 (WHC-17)", gp:5, g:0, a:0, p:0, pim:8},
+   {s:"2026", t:"Canada U18 (Hlinka)", gp:5, g:0, a:0, p:0, pim:0, hl:true}
+  ],
+  tools:[["Skating",9],["Shot",4],["Hockey sense",6],["Compete",6],["Physicality",4]],
+  flags:[["pos","2028 eligible"],["pos","Maturity upside"],["neg","Single-tool projection"],["neg","No production"]],
+  s:[
+   "\"One of the most effortless skaters of his age group\" with tremendous mobility — the skating is a legitimate top-of-league tool.",
+   "Escapes forechecking pressure cleanly and creates separation with edgework rather than speed alone.",
+   "Sixth overall in the 2025 QMJHL Entry Draft and committed to Boston University, so the development environment ahead of him is strong.",
+   "December 2009 birthday makes him 2028-eligible, meaning two full seasons of runway before he has to be evaluated for real."
+  ],
+  w:[
+   "Thirteen points in 58 QMJHL games, and no goals across ten games at two international tournaments. There is no offensive evidence at any level of competition this year.",
+   "Puck skills lag the feet badly — scouts noted he was still finding comfort on the puck through much of the season.",
+   "165 lb and unable to defend physically, which means neither end of the ice currently offers a projectable strength beyond skating.",
+   "The whole projection rests on one tool, and single-tool defencemen have a poor conversion record even when the tool is elite."
+  ],
+  comp:"A skating-first defenceman who needs two other things to develop. Boston University will tell us a great deal.",
+  curWhy:"An early QMJHL first-rounder with a BU commitment, but nothing in the on-ice record this season supports a higher placement.",
+  gmWhy:"Up one, on a technicality that matters: he is 2028-eligible, so his thin production came a full year younger than the players immediately around him. Elite skating, a Boston University commitment and two more development years keep him off the bottom. Thirteen points in 58 games and no goals across ten international games is why he is not higher, and a projection resting entirely on one tool is why I would never spend an early pick.",
+  ceilWhy:"One place down. The 2028 age credit and the 165 lb frame are real positives, but they cannot offset a season with no offensive production anywhere, and a projection built entirely on skating."
+ },
+ {
+  id:"berthiaume", n:"Sam Berthiaume", pos:"G", posLabel:"G · Left", grp:"G",
+  ht:"6'5\"", wt:"185 lb", born:"17 November 2009", age:"16", home:"Stellarton, NS",
+  club:"Cape Breton Eagles (QMJHL)", prev:"Truro Bearcats (MJAHL)", draft:"2028",
+  cur:71, curRank:22, ceil:77, ceilRank:16, gm:79, gmRank:12,
+  line:"MJAHL 25-26: 16 GP · 2.29 GAA · .927 SV% ‖ QMJHL: 1 GP",
+  goalie:true,
+  stats:[
+   {s:"2024–25", t:"South Kent School (15U AAA)", gp:33, g:"3.73", a:".902", p:"—", pim:"—"},
+   {s:"2024–25", t:"South Kent School (16U AAA)", gp:12, g:"3.47", a:".906", p:"4-4-0", pim:1},
+   {s:"2025–26", t:"Truro Bearcats (MJAHL)", gp:16, g:"2.29", a:".927", p:"12-4-0", pim:2, hl:true},
+   {s:"2025–26", t:"Cape Breton (QMJHL)", gp:1, g:"2.77", a:".914", p:"0-0-1", pim:0},
+   {s:"2025–26", t:"Canada White U17 (WHC-17)", gp:4, g:"3.75", a:".897", p:"—", pim:0},
+   {s:"2026", t:"Canada U18 (Hlinka)", gp:1, g:"—", a:"—", p:"—", pim:0, hl:true}
+  ],
+  goalieCols:["GP","GAA","SV%","W-L-T","SO"],
+  tools:[["Athleticism",6],["Technique",6],["Tracking",6],["Compete",7],["Puckhandling",5]],
+  flags:[["pos","2028 eligible"],["pos","Maturity upside"],["neu","Goaltender variance"],["neg","Sample-size risk"]],
+  s:[
+   "6'5\" carrying 185 lb — an enormous frame that is nowhere near filled out, with all of the strength and coordination gains still ahead of him.",
+   ".927 in a men's Maritime Junior league at 16, with a 12-4-0 record and a league championship.",
+   "Scouts see \"the foundations of an NHL prospect\" with \"key high-end strengths,\" including a 37-of-39 performance with several quality saves.",
+   "November 2009 birthday makes him 2028-eligible, so there are two full seasons before he needs to be ranked at all."
+  ],
+  w:[
+   "One QMJHL game. There is essentially no top-junior track record to evaluate.",
+   ".897 at the U17 World Challenge, and a single appearance behind Oaten at the Hlinka.",
+   "At 6'5\" and 185 lb, coordination and net coverage remain open questions until the strength arrives — very tall, very light goaltenders often take longer.",
+   "Goaltenders at 16 are close to unrankable. Placing him last on the current board is an honest reflection of how little is known, not a judgement on the player."
+  ],
+  comp:"A large, raw, late-track goaltender. The MJAHL numbers are encouraging; nothing about them is predictive yet.",
+  curWhy:"Last on the current board because the hockey world has barely seen him — one QMJHL game, one tournament appearance, and no ranking anywhere.",
+  gmWhy:"The board's biggest riser, and the pick that defines the philosophy. At sixteen, goalie results are close to noise and frame is not: 6'5\" carrying 185 pounds is a rarer asset than anything Oaten owns, with 30 pounds still to come. Relative to league average he was 30 to 40 points above in a men's league; Oaten was 15 to 25 below in his. Adjust both for team quality in opposite directions and the gap survives. The risk I am knowingly buying is that tall-and-light is the archetype that never coordinates.",
+  ceilWhy:"Six places up, and above Oaten. On pure ceiling the frame decides it: 6'5\" carrying 185 pounds is the largest strength runway on this roster, and height is the one goaltending attribute that has held up as an NHL filter. His save percentage history is strong at nearly every level — .917, .941, .949, then .927 against men in the MJAHL at sixteen. Goaltender outcomes are distributed widely enough that a very low floor and a genuinely high ceiling coexist without contradiction."
+ }
+];
+
+const boardNotes = {
+  current: "Ordered by how this roster is currently valued — published 2027 and 2028 rankings, scouting consensus, and what happened in Edmonton. Two draft classes are mixed, so placement reflects absolute prospect value rather than rank within class. Click any player for the full report.",
+  ceiling: "The same twenty-two players re-sorted by projected ceiling, using age-adjusted production and the physical maturity curve. This is an upside sort: it asks how high each player could get, not who I would actually call. The chip shows movement against the current board.",
+  gm: "The order I would actually draft in, with my job on the line. Same evidence as the ceiling board, run through an asymmetric risk rule: take the variance when the safe alternative's floor is no better, refuse it when a genuinely safe option exists, and never pay for a case built on tools or reputation alone. Position-neutral — best player available, goalies included."
+};
+
+const rowsEl = document.getElementById('panel');
+const noteEl = document.getElementById('board-note');
+const dlg = document.getElementById('dlg');
+let board = 'current';
+let posFilter = 'all';
+
+try{
+  const saved = localStorage.getItem('hgc-board');
+  if(saved === 'ceiling' || saved === 'current' || saved === 'gm') board = saved;
+}catch(e){}
+
+function tier(rank){ return rank <= 5 ? 'tier-a' : rank <= 13 ? 'tier-b' : 'tier-c'; }
+
+function render(){
+  const key = board === 'current' ? 'curRank' : board === 'ceiling' ? 'ceilRank' : 'gmRank';
+  const rateKey = board === 'current' ? 'cur' : board === 'ceiling' ? 'ceil' : 'gm';
+  const rateLabel = board === 'current' ? 'now' : board === 'ceiling' ? 'ceiling' : 'my pick';
+  const list = P.filter(p => posFilter === 'all' || p.grp === posFilter)
+               .slice().sort((a,b) => a[key] - b[key]);
+
+  rowsEl.className = 'rows board-' + board;
+  noteEl.textContent = boardNotes[board];
+
+  rowsEl.innerHTML = list.map(p => {
+    const delta = p.curRank - p[key];
+    let moveHtml = '';
+    if(board !== 'current'){
+      const cls = delta > 0 ? 'up' : delta < 0 ? 'down' : 'flat';
+      const glyph = delta > 0 ? '▲ ' + delta : delta < 0 ? '▼ ' + Math.abs(delta) : '—';
+      moveHtml = '<div class="move ' + cls + '">' + glyph + '<small>vs now</small></div>';
+    } else {
+      moveHtml = '<div class="move flat">' + p.draft + '<small>draft</small></div>';
+    }
+    return '<button class="row ' + tier(p[key]) + '" data-id="' + p.id + '">' +
+      '<div class="rk">' + p[key] + '</div>' +
+      '<div class="who"><div class="nm">' + p.n + ' <span class="pos">' + p.posLabel + '</span></div>' +
+      '<div class="sub">' + p.club + ' · ' + p.ht + ', ' + p.wt + ' · b. ' + p.born + '</div></div>' +
+      '<div class="statline">' + p.line.split(' ‖ ').map(x => {
+        const i = x.indexOf(':');
+        return i > -1 ? '<span class="lbl">' + x.slice(0,i+1) + '</span>' + x.slice(i+1) : x;
+      }).join('<br>') + '</div>' +
+      '<div class="rating">' + p[rateKey] + '<small>' + rateLabel + '</small></div>' +
+      moveHtml +
+    '</button>';
+  }).join('');
+}
+
+function toolRow(name, val, isGoalie){
+  const cls = val >= 8 ? 'elite' : val <= 4 ? 'weak' : '';
+  return '<div class="tool"><span class="tn">' + name + '</span>' +
+    '<span class="bar"><i class="' + cls + '" style="width:' + (val*10) + '%"></i></span>' +
+    '<span class="tv">' + val + '</span></div>';
+}
+
+function openPlayer(id){
+  const p = P.find(x => x.id === id);
+  if(!p) return;
+  const cols = p.goalie ? p.goalieCols : ["GP","G","A","PTS","PIM"];
+  const delta = p.curRank - p.gmRank;
+  const deltaTxt = delta > 0 ? '▲ ' + delta + ' vs consensus' : delta < 0 ? '▼ ' + Math.abs(delta) + ' vs consensus' : 'Level with consensus';
+  const deltaCol = delta > 0 ? 'var(--up)' : delta < 0 ? 'var(--down)' : 'var(--muted)';
+
+  dlg.innerHTML =
+  '<div class="card' + (board === 'ceiling' ? ' is-ceiling' : board === 'gm' ? ' is-gm' : '') + '">' +
+    '<div class="card-head">' +
+      '<button class="closeb" aria-label="Close player report">✕</button>' +
+      '<h2 id="dlg-name">' + p.n + '</h2>' +
+      '<div class="vitals">' +
+        '<span><b>' + p.posLabel + '</b></span>' +
+        '<span>' + p.ht + ' · ' + p.wt + '</span>' +
+        '<span>Born <b>' + p.born + '</b></span>' +
+        '<span>' + p.home + '</span>' +
+        '<span><b>' + p.club + '</b></span>' +
+        '<span>Draft <b>' + p.draft + '</b></span>' +
+      '</div>' +
+      '<div class="flags">' + p.flags.map(f => '<span class="flag ' + f[0] + '">' + f[1] + '</span>').join('') + '</div>' +
+    '</div>' +
+
+    '<dl class="ratings-strip">' +
+      '<div class="rs cur"><dt>Consensus now</dt><dd>' + p.cur + '<span class="r">#' + p.curRank + '</span></dd></div>' +
+      '<div class="rs ceil"><dt>Ceiling</dt><dd>' + p.ceil + '<span class="r">#' + p.ceilRank + '</span></dd></div>' +
+      '<div class="rs gm"><dt>My board</dt><dd>' + p.gm + '<span class="r">#' + p.gmRank + '</span>' +
+        '<span class="mv" style="color:' + deltaCol + '">' + deltaTxt + '</span></dd></div>' +
+    '</dl>' +
+
+    '<div class="sec"><h3>Record</h3><div class="tbl-scroll"><table>' +
+      '<thead><tr><th class="tm">Season</th><th class="tm">Team</th>' + cols.map(c => '<th>' + c + '</th>').join('') + '</tr></thead>' +
+      '<tbody>' + p.stats.map(r =>
+        '<tr class="' + (r.hl ? 'hl' : '') + '"><td class="tm">' + r.s + '</td><td class="tm">' + r.t + '</td>' +
+        '<td>' + r.gp + '</td><td>' + r.g + '</td><td>' + r.a + '</td><td>' + r.p + '</td><td>' + r.pim + '</td></tr>'
+      ).join('') + '</tbody>' +
+    '</table></div></div>' +
+
+    '<div class="sec"><h3>Tool grades — projected NHL level, 1–10</h3><div class="tools">' +
+      p.tools.map(t => toolRow(t[0], t[1], p.goalie)).join('') +
+    '</div></div>' +
+
+    '<div class="sec"><div class="sw">' +
+      '<div class="s"><h4>Strengths</h4><ul>' + p.s.map(x => '<li>' + x + '</li>').join('') + '</ul></div>' +
+      '<div class="w"><h4>Weaknesses</h4><ul>' + p.w.map(x => '<li>' + x + '</li>').join('') + '</ul></div>' +
+    '</div></div>' +
+
+    '<div class="sec"><h3>Why these ratings</h3><div class="rationale">' +
+      '<div class="rat c"><h4>Consensus — ' + p.cur + ', ranked ' + p.curRank + '</h4><p>' + p.curWhy + '</p></div>' +
+      '<div class="rat p"><h4>Ceiling — ' + p.ceil + ', ranked ' + p.ceilRank + '</h4><p>' + p.ceilWhy + '</p></div>' +
+      '<div class="rat g"><h4>My board — ' + p.gm + ', ranked ' + p.gmRank + '</h4><p>' + p.gmWhy + '</p></div>' +
+    '</div></div>' +
+
+    '<div class="sec"><h3>Comparable archetype</h3><p class="comp">' + p.comp + '</p></div>' +
+  '</div>';
+
+  dlg.showModal();
+  dlg.querySelector('.card').scrollTop = 0;
+  dlg.querySelector('.closeb').addEventListener('click', () => dlg.close());
+}
+
+rowsEl.addEventListener('click', e => {
+  const row = e.target.closest('.row');
+  if(row) openPlayer(row.dataset.id);
+});
+
+dlg.addEventListener('click', e => { if(e.target === dlg) dlg.close(); });
+
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    board = t.dataset.board;
+    document.querySelectorAll('.tab').forEach(x => x.setAttribute('aria-selected', String(x === t)));
+    rowsEl.setAttribute('aria-labelledby', 'tab-' + board);
+    try{ localStorage.setItem('hgc-board', board); }catch(e){}
+    render();
+  });
+});
+
+document.querySelectorAll('.fbtn').forEach(b => {
+  b.addEventListener('click', () => {
+    posFilter = b.dataset.pos;
+    document.querySelectorAll('.fbtn').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    render();
+  });
+});
+
+document.querySelectorAll('.tab').forEach(x => x.setAttribute('aria-selected', String(x.dataset.board === board)));
+render();
+</script>
+
+</body></html>

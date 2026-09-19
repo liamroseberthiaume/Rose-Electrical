@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Power Flow Workbench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@600&display=swap" rel="stylesheet">
+<style>
+/* ========================================================================
+   Design tokens - control-room instrumentation palette.
+   Colour is semantic here: every hue reports a state, none decorate.
+   ===================================================================== */
+:root{
+  --ground:#0B1418;
+  --panel:#101D23;
+  --panel-2:#16272F;
+  --raise:#1B333D;
+  --rule:#223A44;
+  --rule-soft:#1A2C34;
+  --text:#DCE8EC;
+  --text-2:#A8BEC6;
+  --dim:#718B95;
+  --signal:#35C4E8;
+  --signal-dim:#1E6B80;
+  --ok:#46B96A;
+  --warn:#E0A73E;
+  --fault:#E2574C;
+  --v-low:#4A90E0;
+  --v-mid:#93A9B2;
+  --v-high:#E06A55;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  --sans:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+  --cond:'IBM Plex Sans Condensed','IBM Plex Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--ground);color:var(--text);font-family:var(--sans);
+  font-size:13px;line-height:1.45;-webkit-font-smoothing:antialiased;
+  overflow:hidden;
+}
+button,input,select{font-family:inherit;font-size:inherit;color:inherit}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:var(--ground)}
+::-webkit-scrollbar-thumb{background:var(--rule);border-radius:5px}
+::-webkit-scrollbar-thumb:hover{background:var(--raise)}
+:focus-visible{outline:2px solid var(--signal);outline-offset:1px}
+
+/* ---------------- annunciator bar ---------------- */
+.annunciator{
+  display:flex;align-items:center;gap:18px;
+  height:52px;padding:0 16px;
+  background:var(--panel);border-bottom:1px solid var(--rule);
+  flex-shrink:0;
+}
+.brand{display:flex;align-items:baseline;gap:9px;padding-right:16px;border-right:1px solid var(--rule)}
+.brand b{font-family:var(--cond);font-weight:600;font-size:15px;letter-spacing:.06em;text-transform:uppercase}
+.brand span{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.08em}
+
+.field{display:flex;align-items:center;gap:7px}
+.field label{font-family:var(--cond);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);white-space:nowrap}
+select,input[type=number],input[type=text]{
+  background:var(--ground);border:1px solid var(--rule);border-radius:3px;
+  padding:4px 7px;font-family:var(--mono);font-size:12px;
+}
+select:hover,input:hover{border-color:var(--signal-dim)}
+select{cursor:pointer;padding-right:22px}
+
+/* status lamp - reads like a relay panel indicator */
+.lamp{
+  display:flex;align-items:center;gap:9px;margin-left:auto;
+  padding:5px 13px;border-radius:3px;
+  background:var(--ground);border:1px solid var(--rule);
+}
+.lamp .bulb{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.lamp .txt{font-family:var(--cond);font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600}
+.lamp .meta{font-family:var(--mono);font-size:11px;color:var(--dim);white-space:nowrap}
+.lamp.s-ok .bulb{background:var(--ok);box-shadow:0 0 9px var(--ok)}
+.lamp.s-ok .txt{color:var(--ok)}
+.lamp.s-warn .bulb{background:var(--warn);box-shadow:0 0 9px var(--warn)}
+.lamp.s-warn .txt{color:var(--warn)}
+.lamp.s-fault .bulb{background:var(--fault);box-shadow:0 0 9px var(--fault);animation:pulse 1.1s ease-in-out infinite}
+.lamp.s-fault .txt{color:var(--fault)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@media (prefers-reduced-motion:reduce){.lamp.s-fault .bulb{animation:none}}
+
+.btn{
+  background:var(--panel-2);border:1px solid var(--rule);border-radius:3px;
+  padding:5px 11px;cursor:pointer;font-size:12px;font-weight:500;
+  transition:background .12s,border-color .12s;white-space:nowrap;
+}
+.btn:hover{background:var(--raise);border-color:var(--signal-dim)}
+.btn.primary{background:var(--signal-dim);border-color:var(--signal);color:#EAF9FE}
+.btn.primary:hover{background:var(--signal);color:#062028}
+.btn.sm{padding:3px 8px;font-size:11px}
+
+/* ---------------- workspace ---------------- */
+.workspace{
+  display:grid;
+  grid-template-columns:340px minmax(0,1fr) 400px;
+  height:calc(100vh - 52px);
+}
+.col{display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.col.left{border-right:1px solid var(--rule);background:var(--panel)}
+.col.right{border-left:1px solid var(--rule);background:var(--panel)}
+.col.mid{background:var(--ground)}
+
+.pane-head{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:9px 13px;background:var(--panel-2);border-bottom:1px solid var(--rule);
+  flex-shrink:0;
+}
+.pane-head h2{
+  font-family:var(--cond);font-size:11px;font-weight:600;
+  letter-spacing:.11em;text-transform:uppercase;color:var(--text-2);
+}
+.pane-body{overflow:auto;flex:1;padding:11px 13px}
+
+/* ---------------- data tables ---------------- */
+table.grid{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11.5px}
+table.grid th{
+  font-family:var(--cond);font-size:9.5px;font-weight:600;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--dim);text-align:right;
+  padding:4px 5px;border-bottom:1px solid var(--rule);white-space:nowrap;
+  position:sticky;top:0;background:var(--panel);z-index:2;
+}
+table.grid th:first-child,table.grid td:first-child{text-align:left}
+table.grid td{padding:2px 4px;border-bottom:1px solid var(--rule-soft);text-align:right;white-space:nowrap}
+table.grid tr:hover td{background:var(--panel-2)}
+table.grid input,table.grid select{
+  width:100%;background:transparent;border:1px solid transparent;border-radius:2px;
+  padding:2px 4px;text-align:right;font-size:11.5px;
+}
+table.grid input:hover,table.grid select:hover{border-color:var(--rule);background:var(--ground)}
+table.grid input:focus,table.grid select:focus{border-color:var(--signal);background:var(--ground)}
+table.grid select{text-align:left;padding-right:14px}
+table.grid input.name{text-align:left}
+.w-nm{width:70px}.w-ty{width:56px}.w-nu{width:52px}.w-bs{width:60px}
+
+.rowdel{
+  background:none;border:none;color:var(--dim);cursor:pointer;
+  padding:0 3px;font-size:14px;line-height:1;border-radius:2px;
+}
+.rowdel:hover{color:var(--fault);background:var(--panel-2)}
+.tbl-actions{display:flex;gap:6px;margin:8px 0 16px}
+
+/* ---------------- one-line diagram ---------------- */
+.diagram-wrap{flex:1;position:relative;overflow:hidden}
+#diagram{width:100%;height:100%;display:block;cursor:default;touch-action:none}
+.busbar{cursor:grab}
+.busbar:active{cursor:grabbing}
+.legend{
+  position:absolute;left:13px;bottom:13px;
+  background:rgba(11,20,24,.93);border:1px solid var(--rule);border-radius:3px;
+  padding:9px 11px;font-family:var(--mono);font-size:10px;color:var(--text-2);
+  pointer-events:none;
+}
+.legend .ttl{font-family:var(--cond);font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+.legend .scale{display:flex;align-items:center;gap:7px}
+.legend .bar{width:96px;height:8px;border-radius:2px;
+  background:linear-gradient(90deg,var(--v-low),var(--v-mid),var(--v-high))}
+.legend .syms{display:flex;gap:13px;margin-top:7px;font-size:10px}
+
+.hint{
+  position:absolute;right:13px;bottom:13px;
+  font-family:var(--mono);font-size:10px;color:var(--dim);
+  background:rgba(11,20,24,.93);padding:5px 9px;border-radius:3px;
+  border:1px solid var(--rule-soft);pointer-events:none;
+}
+
+/* ---------------- analysis tabs ---------------- */
+.tabs{display:flex;background:var(--panel-2);border-bottom:1px solid var(--rule);flex-shrink:0}
+.tab{
+  flex:1;padding:10px 6px;background:none;border:none;cursor:pointer;
+  font-family:var(--cond);font-size:10.5px;font-weight:600;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--dim);
+  border-bottom:2px solid transparent;transition:color .12s,border-color .12s;
+}
+.tab:hover{color:var(--text-2)}
+.tab.on{color:var(--signal);border-bottom-color:var(--signal);background:var(--panel)}
+.tabpane{display:none}
+.tabpane.on{display:block}
+
+.sec-label{
+  font-family:var(--cond);font-size:9.5px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--dim);
+  margin:15px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--rule-soft);
+}
+.sec-label:first-child{margin-top:0}
+
+/* readout strip: the numbers an engineer checks first */
+.readout{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule-soft);border:1px solid var(--rule-soft);border-radius:3px;overflow:hidden}
+.readout div{background:var(--panel);padding:7px 9px}
+.readout .k{font-family:var(--cond);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.readout .v{font-family:var(--mono);font-size:14px;font-weight:500;margin-top:1px}
+.readout .v small{font-size:10px;color:var(--dim);font-weight:400}
+.v-ok{color:var(--ok)}.v-warn{color:var(--warn)}.v-fault{color:var(--fault)}.v-sig{color:var(--signal)}
+
+.note{
+  font-size:11.5px;color:var(--text-2);line-height:1.5;
+  background:var(--panel-2);border-left:2px solid var(--signal-dim);
+  padding:8px 10px;border-radius:0 3px 3px 0;margin:10px 0;
+}
+.note b{color:var(--text)}
+.note.alarm{border-left-color:var(--fault)}
+.note.clear{border-left-color:var(--ok)}
+
+.ctl-row{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-bottom:10px}
+.ctl{display:flex;flex-direction:column;gap:3px}
+.ctl label{font-family:var(--cond);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.ctl input,.ctl select{width:100%}
+.ctl.grow{flex:1;min-width:96px}
+
+.chart{width:100%;display:block;margin:4px 0 2px}
+.chart-cap{font-family:var(--mono);font-size:10px;color:var(--dim);text-align:center;margin-bottom:12px}
+
+.pill{display:inline-block;padding:1px 6px;border-radius:2px;font-family:var(--cond);
+  font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.pill.ok{background:rgba(70,185,106,.16);color:var(--ok)}
+.pill.warn{background:rgba(224,167,62,.16);color:var(--warn)}
+.pill.fault{background:rgba(226,87,76,.16);color:var(--fault)}
+
+.empty{color:var(--dim);font-size:12px;text-align:center;padding:30px 16px;line-height:1.6}
+.empty b{display:block;color:var(--text-2);font-size:13px;margin-bottom:5px}
+
+.toggle{display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.toggle input{width:14px;height:14px;accent-color:var(--signal);cursor:pointer}
+.toggle span{font-family:var(--cond);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.toggle:hover span{color:var(--text-2)}
+
+.mobile-warn{display:none}
+@media (max-width:1120px){
+  body{overflow:auto}
+  .workspace{grid-template-columns:1fr;height:auto}
+  .col.left,.col.right{border:none;border-bottom:1px solid var(--rule)}
+  .col.mid{height:460px}
+  .pane-body{max-height:400px}
+  .annunciator{flex-wrap:wrap;height:auto;padding:9px 13px;gap:11px}
+  .lamp{margin-left:0;width:100%}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================ annunciator ============================ -->
+<div class="annunciator">
+  <div class="brand"><b>Power Flow</b><span>WORKBENCH</span></div>
+
+  <div class="field">
+    <label for="preset">Network</label>
+    <select id="preset"></select>
+  </div>
+  <div class="field">
+    <label for="baseMVA">Base</label>
+    <input type="number" id="baseMVA" value="100" step="10" style="width:64px"> <span style="font-family:var(--mono);font-size:11px;color:var(--dim)">MVA</span>
+  </div>
+  <label class="toggle" title="If a generator exceeds its reactive capability, convert it to a PQ bus and let its voltage fall off setpoint.">
+    <input type="checkbox" id="qlim"><span>Enforce Q limits</span>
+  </label>
+  <button class="btn sm" id="exportJson">Export JSON</button>
+  <button class="btn sm" id="exportCsv">Export CSV</button>
+
+  <div class="lamp s-ok" id="lamp">
+    <div class="bulb"></div>
+    <div class="txt" id="lampTxt">Ready</div>
+    <div class="meta" id="lampMeta"></div>
+  </div>
+</div>
+
+<!-- ============================ workspace ============================ -->
+<div class="workspace">
+
+  <!-- ---------- left: network editor ---------- -->
+  <div class="col left">
+    <div class="pane-head"><h2>Network</h2><span style="font-family:var(--mono);font-size:10px;color:var(--dim)" id="netSize"></span></div>
+    <div class="pane-body">
+      <div class="sec-label">Buses</div>
+      <table class="grid" id="busTbl"></table>
+      <div class="tbl-actions"><button class="btn sm" id="addBus">+ Add bus</button></div>
+
+      <div class="sec-label">Branches</div>
+      <table class="grid" id="brTbl"></table>
+      <div class="tbl-actions"><button class="btn sm" id="addBr">+ Add branch</button></div>
+    </div>
+  </div>
+
+  <!-- ---------- middle: one-line diagram ---------- -->
+  <div class="col mid">
+    <div class="pane-head">
+      <h2>One-line diagram</h2>
+      <div style="display:flex;gap:6px">
+        <button class="btn sm" id="relayout">Auto-arrange</button>
+      </div>
+    </div>
+    <div class="diagram-wrap">
+      <svg id="diagram"></svg>
+      <div class="legend">
+        <div class="ttl">Bus voltage</div>
+        <div class="scale"><span id="lgLo">0.94</span><div class="bar"></div><span id="lgHi">1.06</span><span style="color:var(--dim)">p.u.</span></div>
+        <div class="syms">
+          <span>&#9679;&nbsp;G = generator</span><span>&#9660;&nbsp;= load</span>
+        </div>
+      </div>
+      <div class="hint">Drag a bus bar to reposition</div>
+    </div>
+  </div>
+
+  <!-- ---------- right: analysis ---------- -->
+  <div class="col right">
+    <div class="tabs">
+      <button class="tab on" data-tab="pf">Power flow</button>
+      <button class="tab" data-tab="n1">N&#8209;1</button>
+      <button class="tab" data-tab="col">Collapse</button>
+      <button class="tab" data-tab="swp">Sweep</button>
+    </div>
+    <div class="pane-body">
+
+      <div class="tabpane on" id="tab-pf"></div>
+
+      <div class="tabpane" id="tab-n1">
+        <div class="note">Removes each branch in turn and re-solves. A network is <b>N&#8209;1 secure</b> if every single outage leaves all voltages inside the band and no branch over its rating.</div>
+        <div class="ctl-row">
+          <div class="ctl"><label>V min</label><input type="number" id="n1vlo" value="0.95" step="0.01" style="width:66px"></div>
+          <div class="ctl"><label>V max</label><input type="number" id="n1vhi" value="1.05" step="0.01" style="width:66px"></div>
+          <button class="btn primary" id="runN1">Run screen</button>
+        </div>
+        <div id="n1out"><div class="empty"><b>No screen run yet</b>Run the screen to find which outages the network cannot survive.</div></div>
+      </div>
+
+      <div class="tabpane" id="tab-col">
+        <div class="note">Scales every load by &lambda; until no solution exists. At the limit the Jacobian goes <b>singular</b> &mdash; &sigma;<sub>min</sub>(J) &rarr; 0. That point is voltage collapse.</div>
+        <div class="ctl-row">
+          <div class="ctl"><label>&lambda; max</label><input type="number" id="colMax" value="8" step="0.5" style="width:66px"></div>
+          <div class="ctl"><label>Steps</label><input type="number" id="colSteps" value="60" step="10" style="width:66px"></div>
+          <button class="btn primary" id="runCol">Trace curve</button>
+        </div>
+        <div id="colout"><div class="empty"><b>No trace yet</b>Trace the curve to find this network's maximum loadability.</div></div>
+      </div>
+
+      <div class="tabpane" id="tab-swp">
+        <div class="note">Vary one parameter and watch the system respond. Reactance moves <b>flow</b>; resistance moves <b>losses</b>.</div>
+        <div class="ctl-row">
+          <div class="ctl grow"><label>Parameter</label><select id="swpParam"></select></div>
+          <div class="ctl grow"><label>Element</label><select id="swpElem"></select></div>
+        </div>
+        <div class="ctl-row">
+          <div class="ctl"><label>From</label><input type="number" id="swpFrom" value="0.5" step="0.1" style="width:66px"></div>
+          <div class="ctl"><label>To</label><input type="number" id="swpTo" value="3" step="0.1" style="width:66px"></div>
+          <div class="ctl"><label>Steps</label><input type="number" id="swpSteps" value="40" step="5" style="width:60px"></div>
+          <button class="btn primary" id="runSwp">Run sweep</button>
+        </div>
+        <div id="swpout"><div class="empty"><b>No sweep run yet</b>Pick a parameter and a range, then run.</div></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* =========================================================================
+   SOLVER - Newton-Raphson AC power flow.
+   Direct port of nr_solver.py, validated against it: identical bus voltages,
+   branch flows, N-1 results and collapse point on the 7-bus reference case.
+   Adds generator Q-limit enforcement (PV->PQ switching).
+   ====================================================================== */
+
+function zeros(n,m){const A=new Array(n);for(let i=0;i<n;i++)A[i]=new Float64Array(m);return A;}
+
+function linSolve(A,b){
+  const n=b.length,M=new Array(n);
+  for(let i=0;i<n;i++){M[i]=new Float64Array(n+1);for(let j=0;j<n;j++)M[i][j]=A[i][j];M[i][n]=b[i];}
+  for(let col=0;col<n;col++){
+    let piv=col,best=Math.abs(M[col][col]);
+    for(let r=col+1;r<n;r++){const v=Math.abs(M[r][col]);if(v>best){best=v;piv=r;}}
+    if(best<1e-14)return null;
+    if(piv!==col){const t=M[piv];M[piv]=M[col];M[col]=t;}
+    const d=M[col][col];
+    for(let r=col+1;r<n;r++){
+      const f=M[r][col]/d; if(f===0)continue;
+      for(let c=col;c<=n;c++)M[r][c]-=f*M[col][c];
+    }
+  }
+  const x=new Float64Array(n);
+  for(let i=n-1;i>=0;i--){let s=M[i][n];for(let j=i+1;j<n;j++)s-=M[i][j]*x[j];x[i]=s/M[i][i];}
+  return x;
+}
+
+/* One-sided Jacobi SVD -> singular values, descending. */
+function singularValues(Ain){
+  const n=Ain.length,m=Ain[0].length,A=zeros(n,m);
+  for(let i=0;i<n;i++)for(let j=0;j<m;j++)A[i][j]=Ain[i][j];
+  for(let sweep=0;sweep<60;sweep++){
+    let off=0;
+    for(let p=0;p<m-1;p++)for(let q=p+1;q<m;q++){
+      let al=0,be=0,ga=0;
+      for(let i=0;i<n;i++){al+=A[i][p]*A[i][p];be+=A[i][q]*A[i][q];ga+=A[i][p]*A[i][q];}
+      if(ga===0||Math.abs(ga)<1e-15*Math.sqrt(al*be))continue;
+      off+=ga*ga;
+      const z=(be-al)/(2*ga);
+      const t=Math.sign(z)/(Math.abs(z)+Math.sqrt(1+z*z));
+      const c=1/Math.sqrt(1+t*t),s=c*t;
+      for(let i=0;i<n;i++){const ap=A[i][p],aq=A[i][q];A[i][p]=c*ap-s*aq;A[i][q]=s*ap+c*aq;}
+    }
+    if(off<1e-30)break;
+  }
+  const sv=[];
+  for(let j=0;j<m;j++){let s=0;for(let i=0;i<n;i++)s+=A[i][j]*A[i][j];sv.push(Math.sqrt(s));}
+  return sv.sort((a,b)=>b-a);
+}
+
+function buildYbus(net){
+  const n=net.buses.length,G=zeros(n,n),B=zeros(n,n);
+  for(const br of net.branches){
+    if(br.out)continue;
+    const den=br.r*br.r+br.x*br.x; if(den===0)continue;
+    const gs=br.r/den, bs=-br.x/den, bc=(br.b||0)/2;
+    const tap=(br.tap&&br.tap>0)?br.tap:1, f=br.f, t=br.t;
+    if(f===t||f==null||t==null||!net.buses[f]||!net.buses[t])continue;
+    G[f][f]+=gs/(tap*tap); B[f][f]+=(bs+bc)/(tap*tap);
+    G[t][t]+=gs;           B[t][t]+=bs+bc;
+    G[f][t]-=gs/tap; B[f][t]-=bs/tap;
+    G[t][f]-=gs/tap; B[t][f]-=bs/tap;
+  }
+  return {G,B};
+}
+
+/* Is every bus still reachable from the slack over in-service branches?
+   An outage that islands load has no solution for a reason quite different
+   from voltage collapse, and the two deserve different messages. */
+function connectivity(net){
+  const n=net.buses.length;
+  let root=net.buses.findIndex(b=>b.type==='slack');
+  if(root<0)root=0;
+  const adj=Array.from({length:n},()=>[]);
+  net.branches.forEach(br=>{
+    if(br.out)return;
+    if(br.f==null||br.t==null||!net.buses[br.f]||!net.buses[br.t])return;
+    adj[br.f].push(br.t);adj[br.t].push(br.f);
+  });
+  const seen=new Array(n).fill(false);
+  const stack=[root];seen[root]=true;
+  while(stack.length){
+    const v=stack.pop();
+    for(const w of adj[v])if(!seen[w]){seen[w]=true;stack.push(w);}
+  }
+  const orphans=[];
+  for(let i=0;i<n;i++)if(!seen[i])orphans.push(i);
+  return{connected:orphans.length===0,orphans};
+}
+
+function calcPQ(V,th,G,B){
+  const n=V.length,P=new Float64Array(n),Q=new Float64Array(n);
+  for(let i=0;i<n;i++){
+    let pi=0,qi=0;
+    for(let k=0;k<n;k++){
+      const a=th[i]-th[k],c=Math.cos(a),s=Math.sin(a);
+      pi+=V[i]*V[k]*(G[i][k]*c+B[i][k]*s);
+      qi+=V[i]*V[k]*(G[i][k]*s-B[i][k]*c);
+    }
+    P[i]=pi;Q[i]=qi;
+  }
+  return {P,Q};
+}
+
+function buildJacobian(V,th,G,B,P,Q,pvpq,pq){
+  const np_=pvpq.length,nq=pq.length,J=zeros(np_+nq,np_+nq);
+  for(let a=0;a<np_;a++){
+    const i=pvpq[a];
+    for(let b=0;b<np_;b++){
+      const k=pvpq[b];
+      if(i===k)J[a][b]=-Q[i]-B[i][i]*V[i]*V[i];
+      else{const g=th[i]-th[k];J[a][b]=V[i]*V[k]*(G[i][k]*Math.sin(g)-B[i][k]*Math.cos(g));}
+    }
+    for(let b=0;b<nq;b++){
+      const k=pq[b];
+      if(i===k)J[a][np_+b]=P[i]/V[i]+G[i][i]*V[i];
+      else{const g=th[i]-th[k];J[a][np_+b]=V[i]*(G[i][k]*Math.cos(g)+B[i][k]*Math.sin(g));}
+    }
+  }
+  for(let a=0;a<nq;a++){
+    const i=pq[a];
+    for(let b=0;b<np_;b++){
+      const k=pvpq[b];
+      if(i===k)J[np_+a][b]=P[i]-G[i][i]*V[i]*V[i];
+      else{const g=th[i]-th[k];J[np_+a][b]=-V[i]*V[k]*(G[i][k]*Math.cos(g)+B[i][k]*Math.sin(g));}
+    }
+    for(let b=0;b<nq;b++){
+      const k=pq[b];
+      if(i===k)J[np_+a][np_+b]=Q[i]/V[i]-B[i][i]*V[i];
+      else{const g=th[i]-th[k];J[np_+a][np_+b]=V[i]*(G[i][k]*Math.sin(g)-B[i][k]*Math.cos(g));}
+    }
+  }
+  return J;
+}
+
+function solve(net,opts){
+  opts=opts||{};
+  const tol=opts.tol!=null?opts.tol:1e-8;
+  const maxIter=opts.maxIter!=null?opts.maxIter:30;
+  const qlim=!!opts.enforceQlim;
+  const n=net.buses.length;
+  if(n===0)return{converged:false,error:'Network has no buses.'};
+  const {G,B}=buildYbus(net);
+
+  const slack=[];net.buses.forEach((b,i)=>{if(b.type==='slack')slack.push(i);});
+  if(slack.length!==1)
+    return{converged:false,error:'Need exactly one slack bus (found '+slack.length+').'};
+
+  const conn=connectivity(net);
+  if(!conn.connected){
+    const nm=conn.orphans.map(i=>net.buses[i].name);
+    return{converged:false,islanded:true,orphans:conn.orphans,
+      error:'Network is split \u2014 '+nm.slice(0,4).join(', ')+
+            (nm.length>4?' and '+(nm.length-4)+' more':'')+
+            ' cannot be reached from the slack bus.'};
+  }
+
+  const type=net.buses.map(b=>b.type);
+  const V=new Float64Array(n),th=new Float64Array(n);
+  for(let i=0;i<n;i++){
+    const b=net.buses[i];
+    V[i]=b.type==='PQ'?1.0:(b.Vset!=null?b.Vset:1.0);
+    th[i]=0;
+  }
+  const Ps=new Float64Array(n),Qs=new Float64Array(n);
+  for(let i=0;i<n;i++){
+    const b=net.buses[i];
+    Ps[i]=(b.Pg||0)-(b.Pd||0);
+    Qs[i]=-(b.Qd||0);
+  }
+
+  const history=[];let converged=false,iterations=0,lastJ=null;const switched=[];
+  for(let it=1;it<=maxIter;it++){
+    const pvpq=[],pq=[];
+    for(let i=0;i<n;i++){if(type[i]!=='slack')pvpq.push(i);if(type[i]==='PQ')pq.push(i);}
+    const {P,Q}=calcPQ(V,th,G,B);
+    const mis=new Float64Array(pvpq.length+pq.length);
+    for(let a=0;a<pvpq.length;a++)mis[a]=Ps[pvpq[a]]-P[pvpq[a]];
+    for(let a=0;a<pq.length;a++)mis[pvpq.length+a]=Qs[pq[a]]-Q[pq[a]];
+    let mx=0;for(let i=0;i<mis.length;i++)mx=Math.max(mx,Math.abs(mis[i]));
+    history.push(mx);
+
+    if(mx<tol){
+      if(qlim){
+        let ch=false;
+        for(let i=0;i<n;i++){
+          const b=net.buses[i];
+          if(type[i]!=='PV')continue;
+          const qg=Q[i]+(b.Qd||0);
+          if(b.Qmax!=null&&b.Qmax!==''&&qg>b.Qmax+1e-9){
+            type[i]='PQ';Qs[i]=b.Qmax-(b.Qd||0);
+            switched.push({bus:i,lim:'Qmax',val:b.Qmax});ch=true;
+          }else if(b.Qmin!=null&&b.Qmin!==''&&qg<b.Qmin-1e-9){
+            type[i]='PQ';Qs[i]=b.Qmin-(b.Qd||0);
+            switched.push({bus:i,lim:'Qmin',val:b.Qmin});ch=true;
+          }
+        }
+        if(ch)continue;
+      }
+      converged=true;iterations=it-1;
+      lastJ=buildJacobian(V,th,G,B,P,Q,pvpq,pq);
+      break;
+    }
+    const J=buildJacobian(V,th,G,B,P,Q,pvpq,pq);
+    const dx=linSolve(J,mis);
+    if(dx===null)
+      return{converged:false,singular:true,
+        error:'Jacobian is singular \u2014 no solvable operating point exists.',
+        history,iterations:it,V:Array.from(V),th:Array.from(th),types:type};
+    for(let a=0;a<pvpq.length;a++)th[pvpq[a]]+=dx[a];
+    for(let a=0;a<pq.length;a++)V[pq[a]]+=dx[pvpq.length+a];
+    iterations=it;
+  }
+  const {P,Q}=calcPQ(V,th,G,B);
+  let sMin=null,cond=null;
+  if(lastJ){
+    const sv=singularValues(lastJ);
+    sMin=sv[sv.length-1];
+    cond=sMin>1e-300?sv[0]/sMin:Infinity;
+  }
+  return{converged,iterations,history,V:Array.from(V),th:Array.from(th),
+         P:Array.from(P),Q:Array.from(Q),types:type,switched,sigmaMin:sMin,cond};
+}
+
+function branchFlows(net,sol){
+  const out=[],Vr=[],Vi=[];
+  for(let i=0;i<net.buses.length;i++){
+    Vr.push(sol.V[i]*Math.cos(sol.th[i]));
+    Vi.push(sol.V[i]*Math.sin(sol.th[i]));
+  }
+  for(const br of net.branches){
+    if(br.out||!net.buses[br.f]||!net.buses[br.t]){
+      out.push({name:br.name,out:true,Pft:0,Qft:0,Ptf:0,Qtf:0,Ploss:0,Qloss:0,Smax:0});
+      continue;
+    }
+    const den=br.r*br.r+br.x*br.x;
+    if(den===0){out.push({name:br.name,out:true,Pft:0,Qft:0,Ptf:0,Qtf:0,Ploss:0,Qloss:0,Smax:0});continue;}
+    const gs=br.r/den,bs=-br.x/den,bc=(br.b||0)/2;
+    const tap=(br.tap&&br.tap>0)?br.tap:1,f=br.f,t=br.t;
+    const a1r=gs/(tap*tap),a1i=(bs+bc)/(tap*tap),a2r=gs/tap,a2i=bs/tap;
+    const Iftr=a1r*Vr[f]-a1i*Vi[f]-(a2r*Vr[t]-a2i*Vi[t]);
+    const Ifti=a1r*Vi[f]+a1i*Vr[f]-(a2r*Vi[t]+a2i*Vr[t]);
+    const b1r=gs,b1i=bs+bc;
+    const Itfr=b1r*Vr[t]-b1i*Vi[t]-(a2r*Vr[f]-a2i*Vi[f]);
+    const Itfi=b1r*Vi[t]+b1i*Vr[t]-(a2r*Vi[f]+a2i*Vr[f]);
+    const Pft=Vr[f]*Iftr+Vi[f]*Ifti, Qft=Vi[f]*Iftr-Vr[f]*Ifti;
+    const Ptf=Vr[t]*Itfr+Vi[t]*Itfi, Qtf=Vi[t]*Itfr-Vr[t]*Itfi;
+    out.push({name:br.name,out:false,Pft,Qft,Ptf,Qtf,
+      Ploss:Pft+Ptf,Qloss:Qft+Qtf,
+      Smax:Math.max(Math.hypot(Pft,Qft),Math.hypot(Ptf,Qtf))});
+  }
+  return out;
+}
+
+function totals(net,sol,flows){
+  const base=net.baseMVA||100;
+  let gen=0,load=0,loss=0;
+  net.buses.forEach((b,i)=>{
+    if(b.type!=='PQ')gen+=sol.P[i]+(b.Pd||0);
+    load+=(b.Pd||0);
+  });
+  for(const f of flows)if(!f.out)loss+=f.Ploss;
+  return{gen:gen*base,load:load*base,loss:loss*base};
+}
+
+/* =========================================================================
+   PRESET NETWORKS
+   ====================================================================== */
+const PRESETS={
+  'sevenbus':{
+    label:'7-Bus (paper reference)',
+    note:'The network from the paper. Meshed, lightly loaded, all voltages inside band.',
+    net:{name:'7-Bus',baseMVA:100,
+      buses:[
+        {name:'Bus 1',type:'slack',Pd:0,Qd:0,Pg:0,Vset:1.04,Qmin:null,Qmax:null,x:80,y:250},
+        {name:'Bus 2',type:'PV',Pd:0,Qd:0,Pg:0.60,Vset:1.03,Qmin:-0.5,Qmax:0.8,x:300,y:90},
+        {name:'Bus 3',type:'PQ',Pd:0.55,Qd:0.13,Pg:0,Vset:1.0,x:540,y:90},
+        {name:'Bus 4',type:'PQ',Pd:0.80,Qd:0.30,Pg:0,Vset:1.0,x:300,y:250},
+        {name:'Bus 5',type:'PQ',Pd:0.40,Qd:0.10,Pg:0,Vset:1.0,x:540,y:410},
+        {name:'Bus 6',type:'PV',Pd:0,Qd:0,Pg:0.70,Vset:1.02,Qmin:-0.4,Qmax:0.7,x:80,y:410},
+        {name:'Bus 7',type:'PQ',Pd:0.35,Qd:0.09,Pg:0,Vset:1.0,x:300,y:410}
+      ],
+      branches:[
+        {name:'L1-2',f:0,t:1,r:0.010,x:0.070,b:0.020,tap:1,rate:1.5},
+        {name:'L2-3',f:1,t:2,r:0.015,x:0.090,b:0.025,tap:1,rate:1.0},
+        {name:'L1-4',f:0,t:3,r:0.012,x:0.080,b:0.022,tap:1,rate:1.2},
+        {name:'L3-4',f:2,t:3,r:0.014,x:0.085,b:0.020,tap:1,rate:1.0},
+        {name:'L4-5',f:3,t:4,r:0.018,x:0.100,b:0.028,tap:1,rate:1.0},
+        {name:'L1-6',f:0,t:5,r:0.011,x:0.075,b:0.021,tap:1,rate:1.2},
+        {name:'L6-7',f:5,t:6,r:0.016,x:0.095,b:0.024,tap:1,rate:1.0},
+        {name:'L5-7',f:4,t:6,r:0.013,x:0.082,b:0.023,tap:1,rate:1.0}
+      ]}
+  },
+  'wscc9':{
+    label:'WSCC 9-Bus (IEEE classic)',
+    note:'Standard 3-machine test system. Slack picks up 71.6 MW, losses 4.6 MW \u2014 matches published values.',
+    net:{name:'WSCC 9-Bus',baseMVA:100,
+      buses:[
+        {name:'Bus 1',type:'slack',Pd:0,Qd:0,Pg:0,Vset:1.040,x:80,y:250},
+        {name:'Bus 2',type:'PV',Pd:0,Qd:0,Pg:1.63,Vset:1.025,Qmin:-1,Qmax:3,x:560,y:80},
+        {name:'Bus 3',type:'PV',Pd:0,Qd:0,Pg:0.85,Vset:1.025,Qmin:-1,Qmax:3,x:560,y:430},
+        {name:'Bus 4',type:'PQ',Pd:0,Qd:0,Pg:0,Vset:1.0,x:210,y:250},
+        {name:'Bus 5',type:'PQ',Pd:1.25,Qd:0.50,Pg:0,Vset:1.0,x:330,y:150},
+        {name:'Bus 6',type:'PQ',Pd:0.90,Qd:0.30,Pg:0,Vset:1.0,x:330,y:350},
+        {name:'Bus 7',type:'PQ',Pd:0,Qd:0,Pg:0,Vset:1.0,x:450,y:150},
+        {name:'Bus 8',type:'PQ',Pd:1.00,Qd:0.35,Pg:0,Vset:1.0,x:450,y:250},
+        {name:'Bus 9',type:'PQ',Pd:0,Qd:0,Pg:0,Vset:1.0,x:450,y:350}
+      ],
+      branches:[
+        {name:'T1-4',f:0,t:3,r:0,     x:0.0576,b:0,    tap:1,rate:2.5},
+        {name:'T2-7',f:1,t:6,r:0,     x:0.0625,b:0,    tap:1,rate:2.5},
+        {name:'T3-9',f:2,t:8,r:0,     x:0.0586,b:0,    tap:1,rate:2.5},
+        {name:'L4-5',f:3,t:4,r:0.010, x:0.085, b:0.176,tap:1,rate:2.5},
+        {name:'L4-6',f:3,t:5,r:0.017, x:0.092, b:0.158,tap:1,rate:2.5},
+        {name:'L5-7',f:4,t:6,r:0.032, x:0.161, b:0.306,tap:1,rate:2.5},
+        {name:'L6-9',f:5,t:8,r:0.039, x:0.170, b:0.358,tap:1,rate:2.5},
+        {name:'L7-8',f:6,t:7,r:0.0085,x:0.072, b:0.149,tap:1,rate:2.5},
+        {name:'L8-9',f:7,t:8,r:0.0119,x:0.1008,b:0.209,tap:1,rate:2.5}
+      ]}
+  },
+  'radial5':{
+    label:'5-Bus Radial (weak feeder)',
+    note:'Radial \u2014 every load has exactly one supply path. Voltages sag further than a meshed network, and any outage islands part of the system.',
+    net:{name:'5-Bus Radial',baseMVA:100,
+      buses:[
+        {name:'Bus 1',type:'slack',Pd:0,Qd:0,Pg:0,Vset:1.05,x:80,y:250},
+        {name:'Bus 2',type:'PQ',Pd:0.24,Qd:0.101,Pg:0,Vset:1.0,x:240,y:250},
+        {name:'Bus 3',type:'PQ',Pd:0.28,Qd:0.118,Pg:0,Vset:1.0,x:400,y:160},
+        {name:'Bus 4',type:'PQ',Pd:0.26,Qd:0.109,Pg:0,Vset:1.0,x:400,y:340},
+        {name:'Bus 5',type:'PQ',Pd:0.18,Qd:0.076,Pg:0,Vset:1.0,x:560,y:160}
+      ],
+      branches:[
+        {name:'L1-2',f:0,t:1,r:0.0128,x:0.075,b:0.010,tap:1,rate:2.0},
+        {name:'L2-3',f:1,t:2,r:0.0181,x:0.095,b:0.012,tap:1,rate:1.2},
+        {name:'L2-4',f:1,t:3,r:0.0171,x:0.090,b:0.012,tap:1,rate:1.2},
+        {name:'L3-5',f:2,t:4,r:0.0199,x:0.105,b:0.010,tap:1,rate:0.8}
+      ]}
+  },
+  'stressed7':{
+    label:'7-Bus Stressed (\u03bb = 4.0)',
+    note:'The paper network with every load scaled 4\u00d7. Voltages are deep in violation and the Jacobian is close to singular.',
+    net:{name:'7-Bus Stressed',baseMVA:100,
+      buses:[
+        {name:'Bus 1',type:'slack',Pd:0,Qd:0,Pg:0,Vset:1.04,x:80,y:250},
+        {name:'Bus 2',type:'PV',Pd:0,Qd:0,Pg:0.60,Vset:1.03,Qmin:-0.5,Qmax:0.8,x:300,y:90},
+        {name:'Bus 3',type:'PQ',Pd:2.20,Qd:0.52,Pg:0,Vset:1.0,x:540,y:90},
+        {name:'Bus 4',type:'PQ',Pd:3.20,Qd:1.20,Pg:0,Vset:1.0,x:300,y:250},
+        {name:'Bus 5',type:'PQ',Pd:1.60,Qd:0.40,Pg:0,Vset:1.0,x:540,y:410},
+        {name:'Bus 6',type:'PV',Pd:0,Qd:0,Pg:0.70,Vset:1.02,Qmin:-0.4,Qmax:0.7,x:80,y:410},
+        {name:'Bus 7',type:'PQ',Pd:1.40,Qd:0.36,Pg:0,Vset:1.0,x:300,y:410}
+      ],
+      branches:[
+        {name:'L1-2',f:0,t:1,r:0.010,x:0.070,b:0.020,tap:1,rate:1.5},
+        {name:'L2-3',f:1,t:2,r:0.015,x:0.090,b:0.025,tap:1,rate:1.0},
+        {name:'L1-4',f:0,t:3,r:0.012,x:0.080,b:0.022,tap:1,rate:1.2},
+        {name:'L3-4',f:2,t:3,r:0.014,x:0.085,b:0.020,tap:1,rate:1.0},
+        {name:'L4-5',f:3,t:4,r:0.018,x:0.100,b:0.028,tap:1,rate:1.0},
+        {name:'L1-6',f:0,t:5,r:0.011,x:0.075,b:0.021,tap:1,rate:1.2},
+        {name:'L6-7',f:5,t:6,r:0.016,x:0.095,b:0.024,tap:1,rate:1.0},
+        {name:'L5-7',f:4,t:6,r:0.013,x:0.082,b:0.023,tap:1,rate:1.0}
+      ]}
+  }
+};
+
+/* =========================================================================
+   STATE
+   ====================================================================== */
+let NET=null, SOL=null, FLOWS=null, TOT=null;
+let OPTS={tol:1e-8,maxIter:30,enforceQlim:false};
+const clone=o=>JSON.parse(JSON.stringify(o));
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=(v,d)=>{const n=parseFloat(v);return isFinite(n)?n:d;};
+
+function loadPreset(key){
+  NET=clone(PRESETS[key].net);
+  $('baseMVA').value=NET.baseMVA;
+  resync();
+}
+
+/* Solve + repaint everything that depends on the solution. */
+function resync(){
+  NET.baseMVA=num($('baseMVA').value,100);
+  OPTS.enforceQlim=$('qlim').checked;
+  SOL=solve(NET,OPTS);
+  FLOWS=SOL.converged?branchFlows(NET,SOL):NET.branches.map(b=>({name:b.name,out:true,Pft:0,Qft:0,Ptf:0,Qtf:0,Ploss:0,Qloss:0,Smax:0}));
+  TOT=SOL.converged?totals(NET,SOL,FLOWS):{gen:0,load:0,loss:0};
+  renderLamp();renderTables();renderDiagram();renderPF();
+  $('netSize').textContent=NET.buses.length+' bus / '+NET.branches.length+' branch';
+  fillSweepSelectors();
+}
+
+/* =========================================================================
+   ANNUNCIATOR
+   ====================================================================== */
+function renderLamp(){
+  const l=$('lamp'),t=$('lampTxt'),m=$('lampMeta');
+  l.className='lamp';
+  if(SOL.error){
+    l.classList.add('s-fault');
+    t.textContent=SOL.singular?'Singular':'Fault';
+    m.textContent=SOL.error;
+  }else if(!SOL.converged){
+    l.classList.add('s-fault');
+    t.textContent='No solution';
+    m.textContent='hit iteration limit \u2014 system may be past collapse';
+  }else{
+    const vs=SOL.V,lo=Math.min.apply(null,vs),hi=Math.max.apply(null,vs);
+    const bad=lo<0.95||hi>1.05;
+    l.classList.add(bad?'s-warn':'s-ok');
+    t.textContent=bad?'Limits':'Converged';
+    const mis=SOL.history[SOL.history.length-1];
+    m.textContent=SOL.iterations+' iter \u00b7 '+mis.toExponential(1)+' p.u. \u00b7 V '+lo.toFixed(3)+'\u2013'+hi.toFixed(3);
+  }
+}
+
+/* =========================================================================
+   NETWORK EDITOR TABLES
+   ====================================================================== */
+function renderTables(){
+  // ---- buses ----
+  let h='<thead><tr><th>Bus</th><th>Type</th><th>Pd</th><th>Qd</th><th>Pg</th><th>Vset</th><th>Qmin</th><th>Qmax</th><th></th></tr></thead><tbody>';
+  NET.buses.forEach((b,i)=>{
+    h+='<tr>'+
+      '<td><input class="name w-nm" data-b="'+i+'" data-k="name" value="'+esc(b.name)+'"></td>'+
+      '<td><select class="w-ty" data-b="'+i+'" data-k="type">'+
+        ['slack','PV','PQ'].map(t=>'<option'+(b.type===t?' selected':'')+'>'+t+'</option>').join('')+
+      '</select></td>'+
+      '<td><input class="w-nu" type="number" step="0.05" data-b="'+i+'" data-k="Pd" value="'+(b.Pd||0)+'"></td>'+
+      '<td><input class="w-nu" type="number" step="0.05" data-b="'+i+'" data-k="Qd" value="'+(b.Qd||0)+'"></td>'+
+      '<td><input class="w-nu" type="number" step="0.05" data-b="'+i+'" data-k="Pg" value="'+(b.Pg||0)+'"></td>'+
+      '<td><input class="w-nu" type="number" step="0.01" data-b="'+i+'" data-k="Vset" value="'+(b.Vset!=null?b.Vset:1)+'"></td>'+
+      '<td><input class="w-nu" type="number" step="0.1" data-b="'+i+'" data-k="Qmin" value="'+(b.Qmin!=null?b.Qmin:'')+'"></td>'+
+      '<td><input class="w-nu" type="number" step="0.1" data-b="'+i+'" data-k="Qmax" value="'+(b.Qmax!=null?b.Qmax:'')+'"></td>'+
+      '<td><button class="rowdel" data-delb="'+i+'" title="Delete bus">\u00d7</button></td></tr>';
+  });
+  $('busTbl').innerHTML=h+'</tbody>';
+
+  // ---- branches ----
+  const opts=NET.buses.map((b,i)=>'<option value="'+i+'">'+esc(b.name)+'</option>').join('');
+  h='<thead><tr><th>Branch</th><th>From</th><th>To</th><th>r</th><th>x</th><th>b</th><th>Tap</th><th>Rate</th><th>In</th><th></th></tr></thead><tbody>';
+  NET.branches.forEach((br,i)=>{
+    h+='<tr>'+
+      '<td><input class="name w-nm" data-r="'+i+'" data-k="name" value="'+esc(br.name)+'"></td>'+
+      '<td><select class="w-bs" data-r="'+i+'" data-k="f">'+opts+'</select></td>'+
+      '<td><select class="w-bs" data-r="'+i+'" data-k="t">'+opts+'</select></td>'+
+      '<td><input class="w-nu" type="number" step="0.001" data-r="'+i+'" data-k="r" value="'+br.r+'"></td>'+
+      '<td><input class="w-nu" type="number" step="0.005" data-r="'+i+'" data-k="x" value="'+br.x+'"></td>'+
+      '<td><input class="w-nu" type="number" step="0.005" data-r="'+i+'" data-k="b" value="'+(br.b||0)+'"></td>'+
+      '<td><input class="w-nu" type="number" step="0.01" data-r="'+i+'" data-k="tap" value="'+(br.tap||1)+'"></td>'+
+      '<td><input class="w-nu" type="number" step="0.1" data-r="'+i+'" data-k="rate" value="'+(br.rate!=null?br.rate:'')+'"></td>'+
+      '<td><input type="checkbox" data-r="'+i+'" data-k="in"'+(br.out?'':' checked')+'></td>'+
+      '<td><button class="rowdel" data-delr="'+i+'" title="Delete branch">\u00d7</button></td></tr>';
+  });
+  $('brTbl').innerHTML=h+'</tbody>';
+  NET.branches.forEach((br,i)=>{
+    const sf=document.querySelector('select[data-r="'+i+'"][data-k="f"]');
+    const st=document.querySelector('select[data-r="'+i+'"][data-k="t"]');
+    if(sf)sf.value=br.f; if(st)st.value=br.t;
+  });
+}
+
+/* Edits are applied on 'input' so the diagram tracks you live. */
+document.addEventListener('input',e=>{
+  const el=e.target;
+  if(el.dataset.b!==undefined&&el.dataset.k){
+    const b=NET.buses[+el.dataset.b],k=el.dataset.k;
+    if(k==='name')b.name=el.value;
+    else if(k==='type')b.type=el.value;
+    else if(k==='Qmin'||k==='Qmax')b[k]=el.value===''?null:parseFloat(el.value);
+    else b[k]=num(el.value,0);
+    if(k==='type'||k==='name'){resync();}else{softResync();}
+  }else if(el.dataset.r!==undefined&&el.dataset.k){
+    const br=NET.branches[+el.dataset.r],k=el.dataset.k;
+    if(k==='name')br.name=el.value;
+    else if(k==='f'||k==='t')br[k]=parseInt(el.value,10);
+    else if(k==='in')br.out=!el.checked;
+    else if(k==='rate')br.rate=el.value===''?null:parseFloat(el.value);
+    else br[k]=num(el.value,0);
+    if(k==='f'||k==='t'||k==='name'){resync();}else{softResync();}
+  }else if(el.id==='baseMVA'){softResync();}
+});
+
+/* Re-solve without rebuilding the editor tables (keeps focus in the field). */
+function softResync(){
+  NET.baseMVA=num($('baseMVA').value,100);
+  OPTS.enforceQlim=$('qlim').checked;
+  SOL=solve(NET,OPTS);
+  FLOWS=SOL.converged?branchFlows(NET,SOL):NET.branches.map(b=>({name:b.name,out:true,Pft:0,Qft:0,Ptf:0,Qtf:0,Ploss:0,Qloss:0,Smax:0}));
+  TOT=SOL.converged?totals(NET,SOL,FLOWS):{gen:0,load:0,loss:0};
+  renderLamp();renderDiagram();renderPF();
+}
+
+document.addEventListener('click',e=>{
+  const db=e.target.dataset.delb, dr=e.target.dataset.delr;
+  if(db!==undefined){
+    const i=+db;
+    NET.branches=NET.branches.filter(b=>b.f!==i&&b.t!==i)
+      .map(b=>({...b,f:b.f>i?b.f-1:b.f,t:b.t>i?b.t-1:b.t}));
+    NET.buses.splice(i,1);
+    resync();
+  }else if(dr!==undefined){
+    NET.branches.splice(+dr,1);resync();
+  }
+});
+
+$('addBus').onclick=()=>{
+  const n=NET.buses.length;
+  NET.buses.push({name:'Bus '+(n+1),type:'PQ',Pd:0.3,Qd:0.1,Pg:0,Vset:1.0,
+                  Qmin:null,Qmax:null,x:120+((n*95)%520),y:150+((n*70)%300)});
+  resync();
+};
+$('addBr').onclick=()=>{
+  if(NET.buses.length<2)return;
+  NET.branches.push({name:'L'+(NET.branches.length+1),f:0,t:1,
+                     r:0.02,x:0.10,b:0.02,tap:1,rate:1.0});
+  resync();
+};
+
+/* =========================================================================
+   ONE-LINE DIAGRAM
+   Buses are drawn as bus bars with generator circles and load arrows -
+   the schematic vocabulary of the field, not a generic node graph.
+   ====================================================================== */
+const VLO=0.94,VHI=1.06,BARW=76,BARH=9;
+
+function vColor(v){
+  const t=Math.max(0,Math.min(1,(v-VLO)/(VHI-VLO)));
+  const stops=[[0,74,144,224],[.5,147,169,178],[1,224,106,85]];
+  let a=stops[0],b=stops[1];
+  if(t>=.5){a=stops[1];b=stops[2];}
+  const f=(t-a[0])/(b[0]-a[0]);
+  return 'rgb('+Math.round(a[1]+f*(b[1]-a[1]))+','+Math.round(a[2]+f*(b[2]-a[2]))+','+Math.round(a[3]+f*(b[3]-a[3]))+')';
+}
+
+function renderDiagram(){
+  const svg=$('diagram'),W=svg.clientWidth||800,H=svg.clientHeight||560;
+  const xs=NET.buses.map(b=>b.x||0),ys=NET.buses.map(b=>b.y||0);
+  const minX=Math.min.apply(null,xs),maxX=Math.max.apply(null,xs);
+  const minY=Math.min.apply(null,ys),maxY=Math.max.apply(null,ys);
+  const padX=110,padY=80;
+  const sx=(maxX-minX)>1?(W-2*padX)/(maxX-minX):1;
+  const sy=(maxY-minY)>1?(H-2*padY)/(maxY-minY):1;
+  const s=Math.min(sx,sy,1.6);
+  const ox=(W-(maxX-minX)*s)/2-minX*s, oy=(H-(maxY-minY)*s)/2-minY*s;
+  const px=i=>(NET.buses[i].x||0)*s+ox, py=i=>(NET.buses[i].y||0)*s+oy;
+
+  const ok=SOL.converged;
+  let g='<defs>'+
+    '<marker id="fa" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto">'+
+    '<path d="M0 1 L7 5 L0 9 z" fill="#8FA8B2"/></marker></defs>';
+
+  // ---- branches ----
+  const maxF=Math.max(0.02,...FLOWS.filter(f=>!f.out).map(f=>Math.abs(f.Pft)));
+  NET.branches.forEach((br,i)=>{
+    if(!NET.buses[br.f]||!NET.buses[br.t])return;
+    const f=FLOWS[i];
+    const x1=px(br.f),y1=py(br.f),x2=px(br.t),y2=py(br.t);
+    const dead=br.out||!ok;
+    const lw=dead?1.5:1.2+4.2*Math.min(1,Math.abs(f.Pft)/maxF);
+    let col='#3A5560';
+    if(!dead&&br.rate&&f.Smax>br.rate)col='#E2574C';
+    else if(!dead&&br.rate&&f.Smax>0.9*br.rate)col='#E0A73E';
+    else if(!dead)col='#5F7F8C';
+    g+='<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+col+'" stroke-width="'+lw+
+       '" stroke-linecap="round"'+(br.out?' stroke-dasharray="5 5"':'')+'/>';
+
+    if(!dead&&Math.abs(f.Pft)>1e-6){
+      // direction arrow at midpoint, pointing the way real power travels
+      const rev=f.Pft<0;
+      const ax1=rev?x2:x1, ay1=rev?y2:y1, ax2=rev?x1:x2, ay2=rev?y1:y2;
+      const mx=(ax1+ax2)/2, my=(ay1+ay2)/2;
+      const ang=Math.atan2(ay2-ay1,ax2-ax1);
+      g+='<line x1="'+(mx-Math.cos(ang)*9)+'" y1="'+(my-Math.sin(ang)*9)+
+         '" x2="'+(mx+Math.cos(ang)*3)+'" y2="'+(my+Math.sin(ang)*3)+
+         '" stroke="#8FA8B2" stroke-width="1.6" marker-end="url(#fa)"/>';
+      const lx=mx+Math.sin(ang)*13, ly=my-Math.cos(ang)*13;
+      g+='<text x="'+lx+'" y="'+ly+'" fill="#8FA8B2" font-family="IBM Plex Mono,monospace" '+
+         'font-size="9.5" text-anchor="middle" dominant-baseline="middle">'+
+         (Math.abs(f.Pft)*NET.baseMVA).toFixed(1)+'</text>';
+    }
+    if(br.out){
+      const mx=(x1+x2)/2,my=(y1+y2)/2;
+      g+='<text x="'+mx+'" y="'+(my-9)+'" fill="#E2574C" font-family="IBM Plex Sans Condensed,sans-serif" '+
+         'font-size="9" letter-spacing="1" text-anchor="middle">OPEN</text>';
+    }
+  });
+
+  // ---- buses ----
+  NET.buses.forEach((b,i)=>{
+    const x=px(i),y=py(i);
+    const v=ok?SOL.V[i]:1.0;
+    const col=ok?vColor(v):'#3A5560';
+    const viol=ok&&(v<0.95||v>1.05);
+    const half=BARW/2;
+
+    // generator symbol above the bar
+    if(b.type!=='PQ'){
+      g+='<line x1="'+x+'" y1="'+(y-BARH/2)+'" x2="'+x+'" y2="'+(y-26)+'" stroke="#5F7F8C" stroke-width="1.6"/>'+
+         '<circle cx="'+x+'" cy="'+(y-35)+'" r="9.5" fill="#101D23" stroke="'+
+         (b.type==='slack'?'#35C4E8':'#8FA8B2')+'" stroke-width="1.6"/>'+
+         '<text x="'+x+'" y="'+(y-35)+'" fill="'+(b.type==='slack'?'#35C4E8':'#C6D8DE')+
+         '" font-family="IBM Plex Sans,sans-serif" font-size="9.5" font-weight="600" '+
+         'text-anchor="middle" dominant-baseline="central">G</text>';
+    }
+    // load arrow below the bar
+    if((b.Pd||0)>0){
+      g+='<line x1="'+x+'" y1="'+(y+BARH/2)+'" x2="'+x+'" y2="'+(y+21)+'" stroke="#5F7F8C" stroke-width="1.6"/>'+
+         '<path d="M'+(x-6)+' '+(y+21)+' L'+(x+6)+' '+(y+21)+' L'+x+' '+(y+32)+' z" fill="#5F7F8C"/>';
+    }
+
+    // the bus bar itself
+    g+='<g class="busbar" data-bus="'+i+'">'+
+       '<rect x="'+(x-half-4)+'" y="'+(y-BARH/2-4)+'" width="'+(BARW+8)+'" height="'+(BARH+8)+
+       '" fill="transparent"/>'+
+       '<rect x="'+(x-half)+'" y="'+(y-BARH/2)+'" width="'+BARW+'" height="'+BARH+
+       '" rx="1.5" fill="'+col+'"'+(viol?' stroke="#E2574C" stroke-width="2"':'')+'/></g>';
+
+    // annotations
+    g+='<text x="'+x+'" y="'+(y-BARH/2-9)+'" fill="#DCE8EC" font-family="IBM Plex Sans,sans-serif" '+
+       'font-size="10.5" font-weight="600" text-anchor="middle">'+esc(b.name)+'</text>';
+    if(ok){
+      g+='<text x="'+x+'" y="'+(y+BARH/2+13)+'" fill="'+(viol?'#E2574C':'#A8BEC6')+
+         '" font-family="IBM Plex Mono,monospace" font-size="10" text-anchor="middle">'+
+         v.toFixed(3)+' pu</text>'+
+         '<text x="'+x+'" y="'+(y+BARH/2+25)+'" fill="#718B95" font-family="IBM Plex Mono,monospace" '+
+         'font-size="9" text-anchor="middle">'+(SOL.th[i]*180/Math.PI).toFixed(2)+'\u00b0</text>';
+    }
+  });
+
+  svg.setAttribute('viewBox','0 0 '+W+' '+H);
+  svg.innerHTML=g;
+  $('lgLo').textContent=VLO.toFixed(2);
+  $('lgHi').textContent=VHI.toFixed(2);
+  attachDrag(s,ox,oy);
+}
+
+/* Drag a bus bar to tidy up the schematic. */
+function attachDrag(s,ox,oy){
+  const svg=$('diagram');
+  let drag=null;
+  svg.querySelectorAll('.busbar').forEach(el=>{
+    el.addEventListener('pointerdown',ev=>{
+      drag={i:+el.dataset.bus};
+      el.setPointerCapture(ev.pointerId);
+      ev.preventDefault();
+    });
+    el.addEventListener('pointermove',ev=>{
+      if(!drag)return;
+      const r=svg.getBoundingClientRect();
+      NET.buses[drag.i].x=((ev.clientX-r.left)-ox)/s;
+      NET.buses[drag.i].y=((ev.clientY-r.top)-oy)/s;
+      renderDiagram();
+    });
+    el.addEventListener('pointerup',()=>{drag=null;});
+    el.addEventListener('pointercancel',()=>{drag=null;});
+  });
+}
+
+$('relayout').onclick=()=>{
+  const n=NET.buses.length,cx=320,cy=250,R=185;
+  NET.buses.forEach((b,i)=>{
+    const a=-Math.PI/2+2*Math.PI*i/n;
+    b.x=cx+R*Math.cos(a); b.y=cy+R*Math.sin(a);
+  });
+  renderDiagram();
+};
+
+/* =========================================================================
+   TAB 1 - POWER FLOW RESULTS
+   ====================================================================== */
+function renderPF(){
+  const el=$('tab-pf');
+  if(SOL.error){
+    let why;
+    if(SOL.islanded)
+      why='Power flow needs one connected system with a slack bus in it. Reconnect those buses with a branch, or delete them.';
+    else if(SOL.singular)
+      why='The Jacobian lost rank. Physically the network cannot deliver the requested power at any voltage \u2014 it is past the point of voltage collapse. Reduce load or add generation.';
+    else
+      why='Check the bus type assignments in the editor.';
+    el.innerHTML='<div class="note alarm"><b>'+esc(SOL.error)+'</b><br>'+why+'</div>';
+    return;
+  }
+  if(!SOL.converged){
+    el.innerHTML='<div class="note alarm"><b>Did not converge in '+OPTS.maxIter+' iterations.</b><br>'+
+      'On a power flow this usually is not a numerical nuisance \u2014 it means the operating point you asked for does not exist. '+
+      'Try the Collapse tab to find where this network runs out of solutions.</div>';
+    return;
+  }
+
+  const base=NET.baseMVA;
+  const vs=SOL.V, lo=Math.min.apply(null,vs), hi=Math.max.apply(null,vs);
+  const bal=TOT.gen-TOT.load-TOT.loss;
+  const lossPct=TOT.load>0?100*TOT.loss/TOT.load:0;
+
+  let h='<div class="readout">'+
+    '<div><div class="k">Iterations</div><div class="v v-sig">'+SOL.iterations+'</div></div>'+
+    '<div><div class="k">Final mismatch</div><div class="v">'+SOL.history[SOL.history.length-1].toExponential(1)+' <small>p.u.</small></div></div>'+
+    '<div><div class="k">Total losses</div><div class="v">'+TOT.loss.toFixed(2)+' <small>MW ('+lossPct.toFixed(2)+'%)</small></div></div>'+
+    '<div><div class="k">&sigma;<sub>min</sub>(J)</div><div class="v '+
+      (SOL.sigmaMin<0.15?'v-fault':SOL.sigmaMin<0.6?'v-warn':'v-ok')+'">'+
+      (SOL.sigmaMin!=null?SOL.sigmaMin.toFixed(3):'\u2014')+'</div></div>'+
+    '</div>';
+
+  const viol=[];
+  NET.buses.forEach((b,i)=>{if(vs[i]<0.95||vs[i]>1.05)viol.push(b.name+' '+vs[i].toFixed(4));});
+  const over=[];
+  NET.branches.forEach((br,i)=>{if(!FLOWS[i].out&&br.rate&&FLOWS[i].Smax>br.rate)
+    over.push(br.name+' '+(100*FLOWS[i].Smax/br.rate).toFixed(0)+'%');});
+
+  if(viol.length||over.length){
+    h+='<div class="note alarm">';
+    if(viol.length)h+='<b>Voltage outside 0.95\u20131.05 p.u.:</b> '+esc(viol.join(', '))+'<br>';
+    if(over.length)h+='<b>Branch over rating:</b> '+esc(over.join(', '));
+    h+='</div>';
+  }else{
+    h+='<div class="note clear">All bus voltages inside 0.95\u20131.05 p.u. and no branch over its rating.</div>';
+  }
+
+  if(SOL.switched&&SOL.switched.length){
+    h+='<div class="note"><b>Q limit reached.</b> '+
+      SOL.switched.map(s=>esc(NET.buses[s.bus].name)+' hit '+s.lim+' ('+(s.val*base).toFixed(0)+' MVAr) and was converted to a PQ bus \u2014 its voltage is no longer held at setpoint.').join(' ')+
+      '</div>';
+  }
+
+  h+='<div class="sec-label">Bus results</div><table class="grid"><thead><tr>'+
+     '<th>Bus</th><th>Type</th><th>V p.u.</th><th>&theta;\u00b0</th><th>P MW</th><th>Q MVAr</th></tr></thead><tbody>';
+  NET.buses.forEach((b,i)=>{
+    const v=vs[i],bad=v<0.95||v>1.05;
+    h+='<tr><td>'+esc(b.name)+'</td><td style="color:var(--dim)">'+SOL.types[i]+'</td>'+
+       '<td'+(bad?' style="color:var(--fault);font-weight:600"':'')+'>'+v.toFixed(4)+'</td>'+
+       '<td>'+(SOL.th[i]*180/Math.PI).toFixed(3)+'</td>'+
+       '<td>'+(SOL.P[i]*base).toFixed(2)+'</td>'+
+       '<td>'+(SOL.Q[i]*base).toFixed(2)+'</td></tr>';
+  });
+  h+='</tbody></table>';
+
+  h+='<div class="sec-label">Branch flows</div><table class="grid"><thead><tr>'+
+     '<th>Branch</th><th>P MW</th><th>Q MVAr</th><th>Loss MW</th><th>Load %</th></tr></thead><tbody>';
+  NET.branches.forEach((br,i)=>{
+    const f=FLOWS[i];
+    if(f.out){h+='<tr><td>'+esc(br.name)+'</td><td colspan="4" style="color:var(--dim);text-align:right">out of service</td></tr>';return;}
+    const pct=br.rate?100*f.Smax/br.rate:null;
+    const cls=pct==null?'':pct>100?' style="color:var(--fault);font-weight:600"':pct>90?' style="color:var(--warn)"':'';
+    h+='<tr><td>'+esc(br.name)+'</td>'+
+       '<td>'+(f.Pft*base).toFixed(2)+'</td><td>'+(f.Qft*base).toFixed(2)+'</td>'+
+       '<td>'+(f.Ploss*base).toFixed(3)+'</td>'+
+       '<td'+cls+'>'+(pct==null?'\u2014':pct.toFixed(0))+'</td></tr>';
+  });
+  h+='</tbody></table>';
+
+  h+='<div class="sec-label">Power balance</div>'+
+     '<table class="grid"><tbody>'+
+     '<tr><td>Generation</td><td>'+TOT.gen.toFixed(3)+' MW</td></tr>'+
+     '<tr><td>Load</td><td>'+TOT.load.toFixed(3)+' MW</td></tr>'+
+     '<tr><td>Losses</td><td>'+TOT.loss.toFixed(3)+' MW</td></tr>'+
+     '<tr><td style="color:var(--dim)">Residual</td><td style="color:var(--dim)">'+bal.toExponential(2)+' MW</td></tr>'+
+     '</tbody></table>'+
+     '<div class="note">Generation minus load minus losses closes to machine precision. The solver never enforces this \u2014 it only comes out right if the equations were solved correctly, so it is a genuine check.</div>';
+
+  h+='<div class="sec-label">Convergence</div>'+lineChart({
+    series:[{x:SOL.history.map((_,i)=>i+1),y:SOL.history,color:'#35C4E8'}],
+    logY:true,w:372,h:120,xlab:'Iteration',ylab:'Max mismatch (p.u.)'
+  })+'<div class="chart-cap">Each error is roughly the square of the one before \u2014 quadratic convergence.</div>';
+
+  el.innerHTML=h;
+}
+
+/* =========================================================================
+   CHART HELPER - small SVG line/scatter plots
+   ====================================================================== */
+function lineChart(o){
+  const w=o.w||372,h=o.h||150,ml=46,mr=10,mt=8,mb=26;
+  const iw=w-ml-mr,ih=h-mt-mb;
+  let xs=[],ys=[];
+  o.series.forEach(s=>{xs=xs.concat(s.x);ys=ys.concat(s.y.filter(v=>isFinite(v)));});
+  if(!xs.length)return '<svg class="chart" viewBox="0 0 '+w+' '+h+'"></svg>';
+  const x0=Math.min.apply(null,xs),x1=Math.max.apply(null,xs);
+  let y0,y1,tf;
+  if(o.logY){
+    const pos=ys.filter(v=>v>0);
+    const lo=pos.length?Math.min.apply(null,pos):1e-12;
+    const hi=pos.length?Math.max.apply(null,pos):1;
+    y0=Math.log10(lo);y1=Math.log10(hi);
+    if(y1-y0<1){y0-=.5;y1+=.5;}
+    tf=v=>v>0?Math.log10(v):y0;
+  }else{
+    y0=Math.min.apply(null,ys);y1=Math.max.apply(null,ys);
+    if(o.y0!=null)y0=Math.min(y0,o.y0);
+    const pad=(y1-y0)*0.08||0.01;y0-=pad;y1+=pad;
+    tf=v=>v;
+  }
+  const X=v=>ml+(x1-x0>0?(v-x0)/(x1-x0):0.5)*iw;
+  const Y=v=>mt+ih-(y1-y0>0?(tf(v)-y0)/(y1-y0):0.5)*ih;
+
+  let g='<svg class="chart" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="xMidYMid meet">';
+  g+='<rect x="'+ml+'" y="'+mt+'" width="'+iw+'" height="'+ih+'" fill="#0B1418" stroke="#1A2C34"/>';
+  for(let i=0;i<=4;i++){
+    const gy=mt+ih*i/4, val=y1-(y1-y0)*i/4;
+    g+='<line x1="'+ml+'" y1="'+gy+'" x2="'+(ml+iw)+'" y2="'+gy+'" stroke="#152730"/>';
+    const lbl=o.logY?('1e'+Math.round(val)):(Math.abs(val)>=100?val.toFixed(0):Math.abs(val)>=1?val.toFixed(2):val.toFixed(3));
+    g+='<text x="'+(ml-5)+'" y="'+(gy+3)+'" fill="#718B95" font-family="IBM Plex Mono,monospace" '+
+       'font-size="8.5" text-anchor="end">'+lbl+'</text>';
+  }
+  for(let i=0;i<=4;i++){
+    const gx=ml+iw*i/4, val=x0+(x1-x0)*i/4;
+    g+='<line x1="'+gx+'" y1="'+mt+'" x2="'+gx+'" y2="'+(mt+ih)+'" stroke="#152730"/>';
+    g+='<text x="'+gx+'" y="'+(mt+ih+13)+'" fill="#718B95" font-family="IBM Plex Mono,monospace" '+
+       'font-size="8.5" text-anchor="middle">'+(Math.abs(val)>=100?val.toFixed(0):val.toFixed(2))+'</text>';
+  }
+  (o.hlines||[]).forEach(hl=>{
+    if(hl.y<y0||hl.y>y1)return;
+    g+='<line x1="'+ml+'" y1="'+Y(hl.y)+'" x2="'+(ml+iw)+'" y2="'+Y(hl.y)+
+       '" stroke="'+hl.color+'" stroke-width="1" stroke-dasharray="3 3"/>';
+  });
+  o.series.forEach(s=>{
+    let d='';
+    s.x.forEach((xv,i)=>{
+      const yv=s.y[i]; if(!isFinite(yv))return;
+      d+=(d?'L':'M')+X(xv).toFixed(1)+' '+Y(yv).toFixed(1)+' ';
+    });
+    if(d)g+='<path d="'+d+'" fill="none" stroke="'+s.color+'" stroke-width="1.8" stroke-linejoin="round"/>';
+    if(s.x.length<=14){
+      s.x.forEach((xv,i)=>{
+        if(!isFinite(s.y[i]))return;
+        g+='<circle cx="'+X(xv).toFixed(1)+'" cy="'+Y(s.y[i]).toFixed(1)+'" r="2.4" fill="'+s.color+'"/>';
+      });
+    }
+  });
+  if(o.xlab)g+='<text x="'+(ml+iw/2)+'" y="'+(h-2)+'" fill="#718B95" '+
+    'font-family="IBM Plex Sans Condensed,sans-serif" font-size="9" letter-spacing=".08em" text-anchor="middle">'+esc(o.xlab)+'</text>';
+  if(o.ylab)g+='<text x="10" y="'+(mt+ih/2)+'" fill="#718B95" '+
+    'font-family="IBM Plex Sans Condensed,sans-serif" font-size="9" letter-spacing=".08em" '+
+    'text-anchor="middle" transform="rotate(-90 10 '+(mt+ih/2)+')">'+esc(o.ylab)+'</text>';
+  return g+'</svg>';
+}
+
+/* =========================================================================
+   TAB 2 - N-1 CONTINGENCY SCREEN
+   ====================================================================== */
+$('runN1').onclick=()=>{
+  const vlo=num($('n1vlo').value,0.95), vhi=num($('n1vhi').value,1.05);
+  const rows=[];
+  NET.branches.forEach((br,i)=>{
+    const test=clone(NET);
+    test.branches[i].out=true;
+    const s=solve(test,OPTS);
+    if(!s.converged){
+      rows.push({name:br.name,ok:false,dead:true,island:!!s.islanded,
+        why:s.islanded?'islands '+s.orphans.length+' bus(es) \u2014 load disconnected'
+           :s.singular?'no solution \u2014 Jacobian singular'
+           :'did not converge'});
+      return;
+    }
+    const f=branchFlows(test,s), t=totals(test,s,f);
+    const vmin=Math.min.apply(null,s.V), vmax=Math.max.apply(null,s.V);
+    const vbad=[];
+    test.buses.forEach((b,k)=>{if(s.V[k]<vlo||s.V[k]>vhi)vbad.push(b.name);});
+    const obad=[];
+    test.branches.forEach((b,k)=>{if(!f[k].out&&b.rate&&f[k].Smax>b.rate)obad.push(b.name);});
+    rows.push({name:br.name,ok:!vbad.length&&!obad.length,dead:false,
+      vmin,vmax,loss:t.loss,vbad,obad,sig:s.sigmaMin});
+  });
+
+  const bad=rows.filter(r=>!r.ok);
+  let h='<div class="readout">'+
+    '<div><div class="k">Outages tested</div><div class="v v-sig">'+rows.length+'</div></div>'+
+    '<div><div class="k">Failures</div><div class="v '+(bad.length?'v-fault':'v-ok')+'">'+bad.length+'</div></div></div>';
+
+  const isl=rows.filter(r=>r.island);
+  if(bad.length){
+    h+='<div class="note alarm"><b>Not N&#8209;1 secure.</b> Losing '+
+       esc(bad.map(r=>r.name).join(', '))+' takes the system outside limits. '+
+       'In the intact base case everything was fine \u2014 this exposure is invisible until you screen for it.</div>';
+    if(isl.length===rows.length&&rows.length>0)
+      h+='<div class="note">Every outage islands load, which is the defining weakness of a <b>radial</b> network: there is only one supply path to each bus, so any line lost disconnects whatever sits behind it. Meshed networks reroute instead.</div>';
+    else if(isl.length)
+      h+='<div class="note">'+esc(isl.map(r=>r.name).join(', '))+' island load rather than merely stressing it \u2014 those are single points of supply, not just weak paths.</div>';
+  }else{
+    h+='<div class="note clear"><b>N&#8209;1 secure.</b> Every single outage leaves the network inside limits.</div>';
+  }
+
+  h+='<div class="sec-label">Outage results</div><table class="grid"><thead><tr>'+
+     '<th>Out</th><th>V min</th><th>V max</th><th>Loss MW</th><th>Status</th></tr></thead><tbody>';
+  rows.slice().sort((a,b)=>(a.dead?-1:b.dead?1:0)||((a.vmin||9)-(b.vmin||9))).forEach(r=>{
+    if(r.dead){
+      h+='<tr><td>'+esc(r.name)+'</td><td colspan="3" style="color:var(--dim);text-align:right">'+esc(r.why)+'</td>'+
+         '<td><span class="pill fault">'+(r.island?'Island':'Fault')+'</span></td></tr>';
+      return;
+    }
+    const st=r.ok?'<span class="pill ok">OK</span>':'<span class="pill fault">Violation</span>';
+    h+='<tr><td>'+esc(r.name)+'</td>'+
+       '<td'+(r.vmin<vlo?' style="color:var(--fault);font-weight:600"':'')+'>'+r.vmin.toFixed(4)+'</td>'+
+       '<td'+(r.vmax>vhi?' style="color:var(--fault);font-weight:600"':'')+'>'+r.vmax.toFixed(4)+'</td>'+
+       '<td>'+r.loss.toFixed(3)+'</td><td>'+st+'</td></tr>';
+    if(!r.ok){
+      const d=[];
+      if(r.vbad.length)d.push('V: '+r.vbad.join(', '));
+      if(r.obad.length)d.push('overload: '+r.obad.join(', '));
+      h+='<tr><td colspan="5" style="color:var(--warn);font-size:10.5px;text-align:left;padding-left:10px">'+esc(d.join(' \u00b7 '))+'</td></tr>';
+    }
+  });
+  h+='</tbody></table>';
+
+  const live=rows.filter(r=>!r.dead);
+  h+='<div class="sec-label">Worst voltage by outage</div>'+lineChart({
+    series:[{x:live.map((_,i)=>i+1),y:live.map(r=>r.vmin),color:'#35C4E8'}],
+    hlines:[{y:vlo,color:'#E0A73E'}],w:372,h:130,xlab:'Outage (table order)',ylab:'V min (p.u.)'
+  });
+  $('n1out').innerHTML=h;
+};
+
+/* =========================================================================
+   TAB 3 - VOLTAGE COLLAPSE / CONTINUATION
+   ====================================================================== */
+$('runCol').onclick=()=>{
+  const lamMax=num($('colMax').value,8), steps=Math.max(10,num($('colSteps').value,60));
+  const base=NET.baseMVA;
+  const baseLoads=NET.buses.map(b=>({Pd:b.Pd||0,Qd:b.Qd||0}));
+  const load0=baseLoads.reduce((a,b)=>a+b.Pd,0)*base;
+  if(load0<=0){
+    $('colout').innerHTML='<div class="note alarm">This network has no load to scale. Add load at a PQ bus first.</div>';
+    return;
+  }
+
+  const scaledNet=lam=>{
+    const t=clone(NET);
+    t.buses.forEach((b,i)=>{b.Pd=baseLoads[i].Pd*lam;b.Qd=baseLoads[i].Qd*lam;});
+    return t;
+  };
+
+  const L=[],Vm=[],Sg=[],Ls=[];
+  let lastOK=0;
+  for(let k=0;k<=steps;k++){
+    const lam=1+(lamMax-1)*k/steps;
+    const s=solve(scaledNet(lam),{...OPTS,maxIter:60});
+    if(!s.converged)break;
+    const t=totals(scaledNet(lam),s,branchFlows(scaledNet(lam),s));
+    L.push(lam*load0);Vm.push(Math.min.apply(null,s.V));
+    Sg.push(s.sigmaMin);Ls.push(t.loss);
+    lastOK=lam;
+  }
+  if(L.length<2){
+    $('colout').innerHTML='<div class="note alarm">The network stops solving almost immediately. It is already at or past its limit.</div>';
+    return;
+  }
+  // bisection for the exact edge
+  let lo=lastOK,hi=Math.min(lamMax,lastOK+(lamMax-1)/steps*2);
+  for(let i=0;i<24;i++){
+    const mid=(lo+hi)/2;
+    if(solve(scaledNet(mid),{...OPTS,maxIter:80}).converged)lo=mid;else hi=mid;
+  }
+  const crit=solve(scaledNet(lo),{...OPTS,maxIter:80});
+
+  let h='<div class="readout">'+
+    '<div><div class="k">Max loadability &lambda;*</div><div class="v v-sig">'+lo.toFixed(3)+'</div></div>'+
+    '<div><div class="k">Load at collapse</div><div class="v">'+(lo*load0).toFixed(0)+' <small>MW</small></div></div>'+
+    '<div><div class="k">Margin over base</div><div class="v '+((lo-1)<0.2?'v-fault':(lo-1)<0.5?'v-warn':'v-ok')+'">'+
+      ((lo-1)*100).toFixed(0)+'<small>%</small></div></div>'+
+    '<div><div class="k">&sigma;<sub>min</sub> at &lambda;*</div><div class="v v-fault">'+
+      (crit.sigmaMin!=null?crit.sigmaMin.toFixed(4):'\u2014')+'</div></div></div>';
+
+  h+='<div class="note'+((lo-1)<0.3?' alarm':'')+'">At &lambda;* the load is <b>'+(lo*load0).toFixed(0)+
+     ' MW</b> and the minimum voltage has fallen to <b>'+Math.min.apply(null,crit.V).toFixed(3)+' p.u.</b> '+
+     'Past this point the solver returns nothing \u2014 not a poor answer, but no answer, because no operating point exists.</div>';
+
+  h+='<div class="sec-label">P\u2013V nose curve</div>'+lineChart({
+    series:[{x:L,y:Vm,color:'#E2574C'}],
+    hlines:[{y:0.95,color:'#E0A73E'}],w:372,h:145,xlab:'Total load (MW)',ylab:'V min (p.u.)'
+  })+'<div class="chart-cap">Voltage sags as load rises, then the curve rounds a nose and stops.</div>';
+
+  h+='<div class="sec-label">Jacobian health</div>'+lineChart({
+    series:[{x:L,y:Sg,color:'#35C4E8'}],y0:0,w:372,h:145,xlab:'Total load (MW)',ylab:'\u03c3 min (J)'
+  })+'<div class="chart-cap">&sigma;<sub>min</sub>(J) falling to zero <em>is</em> voltage collapse \u2014 the matrix losing rank and the grid falling over are the same event.</div>';
+
+  h+='<div class="sec-label">Losses</div>'+lineChart({
+    series:[{x:L,y:Ls,color:'#E0A73E'}],y0:0,w:372,h:125,xlab:'Total load (MW)',ylab:'Losses (MW)'
+  })+'<div class="chart-cap">Losses grow with the square of current \u2014 near collapse the network cooks itself.</div>';
+
+  $('colout').innerHTML=h;
+};
+
+/* =========================================================================
+   TAB 4 - PARAMETER SWEEP
+   ====================================================================== */
+const SWEEPS=[
+  {id:'loadall',label:'Load scale (all buses)',kind:'global'},
+  {id:'bus.Pd',label:'Bus real load Pd',kind:'bus'},
+  {id:'bus.Qd',label:'Bus reactive load Qd',kind:'bus'},
+  {id:'bus.Vset',label:'Bus voltage setpoint',kind:'bus'},
+  {id:'br.r',label:'Branch resistance r',kind:'br'},
+  {id:'br.x',label:'Branch reactance x',kind:'br'},
+  {id:'br.b',label:'Branch charging b',kind:'br'},
+  {id:'br.tap',label:'Branch tap ratio',kind:'br'}
+];
+
+function fillSweepSelectors(){
+  const ps=$('swpParam');
+  if(!ps.options.length)
+    ps.innerHTML=SWEEPS.map(s=>'<option value="'+s.id+'">'+s.label+'</option>').join('');
+  updateSweepElems();
+}
+function updateSweepElems(){
+  const kind=(SWEEPS.find(s=>s.id===$('swpParam').value)||SWEEPS[0]).kind;
+  const es=$('swpElem');
+  if(kind==='global'){
+    es.innerHTML='<option>\u2014 all loads \u2014</option>';es.disabled=true;
+  }else{
+    es.disabled=false;
+    es.innerHTML=(kind==='bus'?NET.buses:NET.branches)
+      .map((o,i)=>'<option value="'+i+'">'+esc(o.name)+'</option>').join('');
+  }
+}
+$('swpParam').onchange=updateSweepElems;
+
+$('runSwp').onclick=()=>{
+  const spec=SWEEPS.find(s=>s.id===$('swpParam').value)||SWEEPS[0];
+  const idx=parseInt($('swpElem').value,10)||0;
+  const from=num($('swpFrom').value,0.5), to=num($('swpTo').value,3);
+  const steps=Math.max(4,Math.min(200,num($('swpSteps').value,40)));
+  const base=NET.baseMVA;
+  const base0=clone(NET);
+
+  const make=val=>{
+    const t=clone(base0);
+    if(spec.kind==='global'){
+      t.buses.forEach((b,i)=>{b.Pd=(base0.buses[i].Pd||0)*val;b.Qd=(base0.buses[i].Qd||0)*val;});
+    }else if(spec.kind==='bus'){
+      const k=spec.id.split('.')[1];
+      if(!t.buses[idx])return null;
+      t.buses[idx][k]=val;
+    }else{
+      const k=spec.id.split('.')[1];
+      if(!t.branches[idx])return null;
+      t.branches[idx][k]=val;
+    }
+    return t;
+  };
+
+  const X=[],Vmin=[],Loss=[],Sig=[],Flow=[];
+  let fails=0;
+  const watch=spec.kind==='br'?idx:0;
+  for(let k=0;k<=steps;k++){
+    const val=from+(to-from)*k/steps;
+    const t=make(val);
+    if(!t){continue;}
+    const s=solve(t,{...OPTS,maxIter:50});
+    X.push(val);
+    if(!s.converged){
+      fails++;Vmin.push(NaN);Loss.push(NaN);Sig.push(NaN);Flow.push(NaN);continue;
+    }
+    const f=branchFlows(t,s), tt=totals(t,s,f);
+    Vmin.push(Math.min.apply(null,s.V));
+    Loss.push(tt.loss);
+    Sig.push(s.sigmaMin);
+    Flow.push(f[watch]&&!f[watch].out?Math.abs(f[watch].Pft*base):NaN);
+  }
+
+  const lbl=spec.label+(spec.kind==='global'?''
+    :' \u00b7 '+esc((spec.kind==='bus'?NET.buses[idx]:NET.branches[idx]).name));
+
+  let h='<div class="readout">'+
+    '<div><div class="k">Points</div><div class="v v-sig">'+X.length+'</div></div>'+
+    '<div><div class="k">No solution</div><div class="v '+(fails?'v-warn':'v-ok')+'">'+fails+'</div></div></div>';
+  h+='<div class="note">Sweeping <b>'+lbl+'</b> from '+from+' to '+to+'.'+
+     (fails?' '+fails+' point(s) had no solution \u2014 those gaps in the curves are where the network runs out of physics.':'')+'</div>';
+
+  h+='<div class="sec-label">Minimum bus voltage</div>'+lineChart({
+    series:[{x:X,y:Vmin,color:'#35C4E8'}],hlines:[{y:0.95,color:'#E0A73E'}],
+    w:372,h:135,xlab:lbl,ylab:'V min (p.u.)'});
+
+  h+='<div class="sec-label">Total losses</div>'+lineChart({
+    series:[{x:X,y:Loss,color:'#E0A73E'}],y0:0,w:372,h:135,xlab:lbl,ylab:'Losses (MW)'});
+
+  if(spec.kind==='br'){
+    h+='<div class="sec-label">Flow on '+esc(NET.branches[idx].name)+'</div>'+lineChart({
+      series:[{x:X,y:Flow,color:'#46B96A'}],y0:0,w:372,h:135,xlab:lbl,ylab:'|P| (MW)'})+
+      '<div class="chart-cap">Reactance reroutes flow; resistance mostly does not.</div>';
+  }
+
+  h+='<div class="sec-label">Jacobian health</div>'+lineChart({
+    series:[{x:X,y:Sig,color:'#E2574C'}],y0:0,w:372,h:135,xlab:lbl,ylab:'\u03c3 min (J)'});
+
+  h+='<div class="sec-label">Data</div><table class="grid"><thead><tr><th>Value</th><th>V min</th><th>Loss MW</th><th>&sigma; min</th></tr></thead><tbody>';
+  X.forEach((v,i)=>{
+    h+='<tr><td>'+v.toFixed(4)+'</td>'+
+       '<td>'+(isFinite(Vmin[i])?Vmin[i].toFixed(4):'\u2014')+'</td>'+
+       '<td>'+(isFinite(Loss[i])?Loss[i].toFixed(3):'\u2014')+'</td>'+
+       '<td>'+(isFinite(Sig[i])?Sig[i].toFixed(4):'\u2014')+'</td></tr>';
+  });
+  h+='</tbody></table>';
+  $('swpout').innerHTML=h;
+};
+
+/* =========================================================================
+   TABS / EXPORT / BOOT
+   ====================================================================== */
+document.querySelectorAll('.tab').forEach(t=>{
+  t.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+    document.querySelectorAll('.tabpane').forEach(x=>x.classList.remove('on'));
+    t.classList.add('on');
+    $('tab-'+t.dataset.tab).classList.add('on');
+  };
+});
+
+function download(name,text,mime){
+  const b=new Blob([text],{type:mime||'text/plain'});
+  const u=URL.createObjectURL(b), a=document.createElement('a');
+  a.href=u;a.download=name;a.click();
+  setTimeout(()=>URL.revokeObjectURL(u),1500);
+}
+$('exportJson').onclick=()=>download(
+  (NET.name||'network').replace(/\s+/g,'_')+'.json',
+  JSON.stringify(NET,null,2),'application/json');
+
+$('exportCsv').onclick=()=>{
+  if(!SOL.converged){alert('Solve the network first \u2014 there are no results to export.');return;}
+  const base=NET.baseMVA;
+  let c='bus,type,V_pu,angle_deg,P_MW,Q_MVAr\n';
+  NET.buses.forEach((b,i)=>{
+    c+=[b.name,SOL.types[i],SOL.V[i].toFixed(6),(SOL.th[i]*180/Math.PI).toFixed(6),
+        (SOL.P[i]*base).toFixed(4),(SOL.Q[i]*base).toFixed(4)].join(',')+'\n';
+  });
+  c+='\nbranch,P_from_MW,Q_from_MVAr,P_loss_MW,S_max_pu\n';
+  NET.branches.forEach((br,i)=>{
+    const f=FLOWS[i];
+    c+=[br.name,(f.Pft*base).toFixed(4),(f.Qft*base).toFixed(4),
+        (f.Ploss*base).toFixed(5),f.Smax.toFixed(5)].join(',')+'\n';
+  });
+  download((NET.name||'results').replace(/\s+/g,'_')+'_results.csv',c,'text/csv');
+};
+
+$('preset').innerHTML=Object.keys(PRESETS)
+  .map(k=>'<option value="'+k+'">'+esc(PRESETS[k].label)+'</option>').join('');
+$('preset').onchange=e=>loadPreset(e.target.value);
+$('qlim').onchange=softResync;
+$('baseMVA').onchange=softResync;
+
+let rz;
+window.addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(renderDiagram,120);});
+
+loadPreset('sevenbus');
+</script>
+</body>
+</html>

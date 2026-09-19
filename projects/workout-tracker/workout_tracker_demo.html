@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workout Tracker &mdash; Interactive Demo | Rose Electrical</title>
+<meta name="description" content="A browser sandbox of a FastAPI workout tracker: JWT auth, workout planning, scheduling, and progress reports.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C41E3A'%3E%3Cpath d='M13 2L4 14h6l-1 8 9-12h-6l1-8z'/%3E%3C/svg%3E">
+<style>
+/* =======================================================================
+   Rose Electrical tokens — same palette and type as the main site, so the
+   tool reads as part of the portfolio rather than a bolted-on app.
+   ===================================================================== */
+:root{
+  --crimson:#C41E3A;
+  --crimson-dark:#951830;
+  --crimson-soft:#F6DEE2;
+  --navy:#1B2338;
+  --navy-light:#2A3550;
+  --paper:#FAF9F7;
+  --paper-dim:#F1EEE8;
+  --ink:#1B2338;
+  --ink-soft:#5B6270;
+  --ink-mute:#8A8F9B;
+  --spark:#F5B700;
+  --rule:rgba(27,35,56,0.12);
+  --rule-soft:rgba(27,35,56,0.07);
+  --serif:'Fraunces', Georgia, serif;
+  --sans:'Space Grotesk', system-ui, sans-serif;
+  --mono:'Space Mono', ui-monospace, monospace;
+
+  /* Data ink. One hue, used for every mark: each chart here plots a single
+     series, so colour carries no identity and length does all the encoding.
+     Validated at 5.55:1 against --paper. */
+  --data:#C41E3A;
+  --data-wash:rgba(196,30,58,0.10);
+  --grid:rgba(27,35,56,0.10);
+}
+
+*{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} *{animation:none!important;transition:none!important} }
+
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--sans); font-size:15px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{ font-family:var(--serif); font-weight:600; margin:0; color:var(--navy); letter-spacing:-0.01em; }
+p{ margin:0; }
+a{ color:inherit; }
+img{ max-width:100%; display:block; }
+:focus-visible{ outline:2px solid var(--crimson); outline-offset:2px; }
+
+.wrap{ max-width:1180px; margin:0 auto; padding:0 32px; }
+@media (max-width:640px){ .wrap{ padding:0 20px; } }
+
+/* ---------------- top bar ---------------- */
+header.bar{
+  position:sticky; top:0; z-index:60;
+  background:rgba(250,249,247,0.92); backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--rule);
+}
+.bar-inner{ display:flex; align-items:center; gap:16px; height:66px; }
+.bar-brand{ display:flex; align-items:center; gap:12px; text-decoration:none; }
+.bar-brand img{ height:30px; width:auto; }
+.bar-divider{ width:1px; height:22px; background:var(--rule); }
+.bar-title{ font-family:var(--mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft); }
+.sandbox-badge{
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--crimson); background:var(--crimson-soft);
+  padding:4px 9px; border-radius:3px; white-space:nowrap;
+}
+.bar-spacer{ flex:1; }
+.back-link{
+  font-size:14px; font-weight:500; text-decoration:none; color:var(--ink-soft);
+  display:inline-flex; align-items:center; gap:7px; white-space:nowrap;
+}
+.back-link:hover{ color:var(--crimson); }
+@media (max-width:720px){ .bar-title, .bar-divider{ display:none; } }
+
+/* ---------------- intro ---------------- */
+.intro{ padding:44px 0 30px; border-bottom:1px solid var(--rule); }
+.eyebrow{
+  font-family:var(--mono); font-size:12.5px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--crimson); display:flex; align-items:center; gap:10px; margin:0 0 14px;
+}
+.eyebrow::before{ content:''; width:22px; height:1px; background:var(--crimson); }
+.intro h1{ font-size:clamp(28px,4.4vw,42px); line-height:1.1; max-width:15ch; }
+.intro .lede{ margin-top:14px; max-width:62ch; color:var(--ink-soft); font-size:16px; }
+.chips{ display:flex; flex-wrap:wrap; gap:7px; margin-top:20px; }
+.chip{
+  font-family:var(--mono); font-size:11.5px; letter-spacing:.04em;
+  border:1px solid var(--rule); border-radius:3px; padding:5px 10px; color:var(--ink-soft);
+  background:#fff;
+}
+.intro-links{ display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; }
+.btn{
+  font-family:var(--sans); font-weight:600; font-size:14px;
+  padding:11px 20px; border-radius:3px; border:1.5px solid transparent;
+  cursor:pointer; display:inline-flex; align-items:center; gap:9px; text-decoration:none;
+  transition:transform .15s ease, background .15s ease, box-shadow .15s ease, color .15s ease;
+}
+.btn-primary{ background:var(--crimson); color:#fff; }
+.btn-primary:hover{ background:var(--crimson-dark); transform:translateY(-1px); box-shadow:0 8px 20px rgba(196,30,58,.24); }
+.btn-outline{ background:transparent; border-color:var(--navy); color:var(--navy); }
+.btn-outline:hover{ background:var(--navy); color:#fff; transform:translateY(-1px); }
+
+/* ---------------- sandbox notice ---------------- */
+.notice{
+  display:flex; gap:13px; align-items:flex-start;
+  background:#fff; border:1px solid var(--rule); border-left:3px solid var(--spark);
+  padding:15px 18px; margin:26px 0 0; border-radius:3px;
+}
+.notice svg{ flex-shrink:0; margin-top:2px; }
+.notice p{ font-size:14px; color:var(--ink-soft); }
+.notice b{ color:var(--ink); font-weight:600; }
+
+/* ---------------- app shell ---------------- */
+.app{ padding:30px 0 90px; }
+nav.tabs{ display:flex; gap:2px; border-bottom:1px solid var(--rule); margin-bottom:26px; flex-wrap:wrap; }
+nav.tabs button{
+  background:none; border:none; border-bottom:2px solid transparent;
+  font:inherit; font-size:14.5px; font-weight:500; color:var(--ink-soft);
+  padding:11px 17px; cursor:pointer; transition:.15s; margin-bottom:-1px;
+}
+nav.tabs button:hover{ color:var(--ink); }
+nav.tabs button.active{ color:var(--crimson); border-bottom-color:var(--crimson); font-weight:600; }
+
+section.panel{ display:none; }
+section.panel.active{ display:block; animation:fade .22s ease; }
+@keyframes fade{ from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:none} }
+
+/* ---------------- cards & forms ---------------- */
+.card{ background:#fff; border:1px solid var(--rule); border-radius:3px; padding:24px; margin-bottom:18px; }
+.card > h2{ font-size:19px; }
+.card .hint{ color:var(--ink-soft); font-size:14px; margin-top:5px; margin-bottom:20px; }
+
+label{
+  display:block; font-family:var(--mono); font-size:10.5px; color:var(--ink-soft);
+  margin-bottom:6px; text-transform:uppercase; letter-spacing:.1em;
+}
+input,select,textarea{
+  width:100%; padding:10px 12px; background:var(--paper); color:var(--ink);
+  border:1px solid var(--rule); border-radius:3px;
+  font-family:var(--sans); font-size:14px; outline:none; transition:border-color .15s;
+}
+input:focus,select:focus,textarea:focus{ border-color:var(--crimson); }
+textarea{ resize:vertical; min-height:64px; }
+.row{ display:flex; gap:14px; flex-wrap:wrap; }
+.row > *{ flex:1; min-width:150px; }
+.field{ margin-bottom:16px; }
+
+button.b{
+  padding:10px 17px; border-radius:3px; border:1px solid var(--rule);
+  background:#fff; color:var(--ink); font-family:var(--sans); font-size:14px; font-weight:500;
+  cursor:pointer; transition:.15s;
+}
+button.b:hover{ border-color:var(--navy); }
+button.b.primary{ background:var(--crimson); color:#fff; border-color:var(--crimson); font-weight:600; }
+button.b.primary:hover{ background:var(--crimson-dark); }
+button.x{
+  background:none; border:none; color:var(--ink-mute); cursor:pointer;
+  font-size:19px; line-height:1; padding:4px 8px; border-radius:3px;
+}
+button.x:hover{ color:var(--crimson); background:var(--crimson-soft); }
+
+/* exercise builder */
+.ex-row{ display:grid; grid-template-columns:minmax(170px,2.2fr) 72px 72px 92px auto; gap:9px; align-items:center; margin-bottom:9px; }
+.ex-row input,.ex-row select{ padding:8px 10px; }
+.ex-head span{ font-family:var(--mono); font-size:10.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.1em; }
+@media (max-width:760px){
+  .ex-row{ grid-template-columns:1fr 1fr 1fr auto; }
+  .ex-row select{ grid-column:1/-1; }
+  .ex-head{ display:none; }
+}
+
+/* ---------------- workout cards ---------------- */
+.workout{ background:#fff; border:1px solid var(--rule); border-radius:3px; padding:19px 21px; margin-bottom:13px; }
+.workout-head{ display:flex; align-items:flex-start; gap:14px; }
+.workout-title{ font-family:var(--serif); font-weight:600; font-size:17px; color:var(--navy); }
+.workout-meta{ color:var(--ink-soft); font-size:13.5px; margin-top:3px; font-family:var(--mono); }
+.workout-actions{ display:flex; gap:7px; align-items:center; }
+.pill{
+  font-family:var(--mono); font-size:10px; padding:4px 9px; border-radius:3px;
+  text-transform:uppercase; letter-spacing:.1em; font-weight:700; white-space:nowrap;
+}
+.pill.pending{ color:#8A6400; background:#FDF3D6; }
+.pill.completed{ color:#1E6B3A; background:#DEF0E4; }
+.pill.skipped{ color:var(--ink-soft); background:var(--paper-dim); }
+
+table.entries{ width:100%; border-collapse:collapse; margin-top:16px; font-size:13.5px; }
+table.entries th{
+  text-align:left; color:var(--ink-soft); font-family:var(--mono); font-weight:400; font-size:10.5px;
+  text-transform:uppercase; letter-spacing:.1em; padding:7px 9px; border-bottom:1px solid var(--rule);
+}
+table.entries td{ padding:8px 9px; border-bottom:1px solid var(--rule-soft); }
+table.entries tr:last-child td{ border-bottom:none; }
+td.num,th.num{ text-align:right; font-family:var(--mono); font-variant-numeric:tabular-nums; }
+.comment{ margin-top:14px; padding:11px 14px; background:var(--paper); border-left:2px solid var(--rule); color:var(--ink-soft); font-size:13.5px; }
+.empty{
+  color:var(--ink-soft); font-size:14.5px; padding:44px 24px; text-align:center;
+  border:1px dashed var(--rule); border-radius:3px; background:#fff;
+}
+
+/* ---------------- reports ---------------- */
+.filter-row{ display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; margin-bottom:24px; }
+.filter-row > div{ max-width:210px; }
+
+.hero-fig{ background:#fff; border:1px solid var(--rule); border-radius:3px; padding:26px 28px; margin-bottom:14px; }
+.hero-fig .k{ font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.12em; color:var(--ink-soft); }
+/* Hero figure: sans, not the serif — a display face here reads as decoration.
+   Proportional figures (no tabular-nums) so a big number sits tight. */
+.hero-fig .v{ font-family:var(--sans); font-size:clamp(44px,7vw,60px); font-weight:600; line-height:1.05; margin-top:10px; letter-spacing:-0.02em; color:var(--navy); }
+.hero-fig .v small{ font-size:.36em; font-weight:500; color:var(--ink-soft); margin-left:8px; letter-spacing:0; }
+.hero-fig .sub{ font-size:14px; color:var(--ink-soft); margin-top:8px; }
+.hero-fig .delta{ font-family:var(--mono); font-size:13px; font-weight:700; }
+.delta.up{ color:#1E6B3A; } .delta.down{ color:var(--crimson); } .delta.flat{ color:var(--ink-soft); }
+
+.stats{ display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin-bottom:18px; }
+.stat{ background:#fff; border:1px solid var(--rule); border-radius:3px; padding:17px 19px; }
+.stat .k{ font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.1em; color:var(--ink-soft); }
+.stat .v{ font-size:27px; font-weight:600; margin-top:7px; letter-spacing:-0.01em; color:var(--navy); }
+
+.chart-head{ display:flex; align-items:flex-start; gap:16px; margin-bottom:4px; }
+.chart-head h2{ font-size:18px; }
+.chart-head .spacer{ flex:1; }
+.toggle-table{
+  font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase;
+  background:none; border:1px solid var(--rule); border-radius:3px; color:var(--ink-soft);
+  padding:5px 10px; cursor:pointer; white-space:nowrap;
+}
+.toggle-table:hover{ border-color:var(--navy); color:var(--ink); }
+
+/* bar chart */
+.bars{ margin-top:20px; }
+.bar-row{ display:grid; grid-template-columns:132px 1fr 92px; gap:14px; align-items:center; margin-bottom:10px; }
+.bar-label{ font-size:13.5px; text-transform:capitalize; color:var(--ink); }
+.bar-track{ position:relative; height:22px; }
+/* 4px rounded data-end, square at the baseline (left) */
+.bar-fill{ height:100%; background:var(--data); border-radius:0 4px 4px 0; transition:width .3s ease, filter .12s; }
+.bar-row:hover .bar-fill{ filter:brightness(1.12); }
+.bar-val{ text-align:right; font-family:var(--mono); font-size:12.5px; color:var(--ink-soft); font-variant-numeric:tabular-nums; }
+@media (max-width:600px){ .bar-row{ grid-template-columns:100px 1fr 74px; gap:9px; } }
+
+/* line chart */
+.linechart{ position:relative; margin-top:18px; }
+.linechart svg{ width:100%; height:auto; display:block; overflow:visible; }
+.tt{
+  position:absolute; pointer-events:none; opacity:0; transform:translate(-50%,-100%);
+  background:var(--navy); color:#fff; padding:8px 11px; border-radius:3px;
+  font-size:12.5px; white-space:nowrap; transition:opacity .1s; z-index:5;
+  box-shadow:0 4px 14px rgba(27,35,56,.22);
+}
+.tt .tv{ font-family:var(--mono); font-weight:700; font-size:14px; display:block; }
+.tt .tl{ color:#B9C0D0; font-size:11.5px; }
+.tt .key{ display:inline-block; width:11px; height:2px; background:var(--data); vertical-align:middle; margin-right:6px; }
+
+table.dataview{ width:100%; border-collapse:collapse; margin-top:18px; font-size:13.5px; }
+table.dataview th{
+  text-align:left; font-family:var(--mono); font-weight:400; font-size:10.5px; color:var(--ink-soft);
+  text-transform:uppercase; letter-spacing:.1em; padding:8px 9px; border-bottom:1px solid var(--rule);
+}
+table.dataview td{ padding:8px 9px; border-bottom:1px solid var(--rule-soft); }
+table.dataview tr:last-child td{ border-bottom:none; }
+
+/* ---------------- how it works ---------------- */
+.how{ background:var(--navy); color:#fff; padding:52px 0; margin-top:8px; }
+.how h2{ color:#fff; font-size:24px; }
+.how .eyebrow{ color:var(--spark); }
+.how .eyebrow::before{ background:var(--spark); }
+.how-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1px; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.14); margin-top:26px; }
+.how-cell{ background:var(--navy); padding:22px; }
+.how-cell h3{ color:#fff; font-size:16px; margin-bottom:8px; }
+.how-cell p{ color:#B9C0D0; font-size:14px; }
+.how-cell code{ font-family:var(--mono); font-size:12.5px; color:var(--spark); }
+
+footer.foot{ padding:30px 0; border-top:1px solid var(--rule); color:var(--ink-soft); font-size:13.5px; }
+.foot-inner{ display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
+
+#toast{
+  position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(150%);
+  background:var(--navy); color:#fff; padding:12px 20px; border-radius:3px; font-size:14px;
+  transition:transform .25s cubic-bezier(.3,1.3,.5,1); z-index:99; max-width:90vw;
+  box-shadow:0 6px 22px rgba(27,35,56,.26);
+  visibility:hidden;   /* keeps the empty pill out of full-page captures and off screen readers */
+}
+#toast.show{ transform:translateX(-50%) translateY(0); visibility:visible; }
+#toast.error{ background:var(--crimson); }
+</style>
+</head>
+<body data-palette="#C41E3A">
+
+<header class="bar">
+  <div class="wrap bar-inner">
+    <a class="bar-brand" href="../../index.html#projects">
+      <img src="../../images/rose-electrical-logo.png" alt="Rose Electrical">
+    </a>
+    <span class="bar-divider"></span>
+    <span class="bar-title">Workout Tracker</span>
+    <span class="sandbox-badge">Demo sandbox</span>
+    <span class="bar-spacer"></span>
+    <a class="back-link" href="../../index.html#projects">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+      Back to projects
+    </a>
+  </div>
+</header>
+
+<main>
+  <section class="intro">
+    <div class="wrap">
+      <p class="eyebrow">Software &amp; Tooling</p>
+      <h1>Workout Tracker API</h1>
+      <p class="lede">
+        A REST backend for planning, scheduling and reviewing training sessions &mdash; JWT authentication
+        with refresh-token rotation, a normalised exercise catalogue, and progress reports aggregated in SQL.
+        Everything below is the real interface, running against an in-browser stand-in for the Python server.
+      </p>
+      <div class="chips">
+        <span class="chip">FastAPI</span>
+        <span class="chip">SQLAlchemy 2.0</span>
+        <span class="chip">Alembic</span>
+        <span class="chip">JWT + bcrypt</span>
+        <span class="chip">SQLite &rarr; Postgres</span>
+        <span class="chip">50 assertions passing</span>
+      </div>
+      <div class="intro-links">
+        <a class="btn btn-primary" href="#app-top">
+          Try it
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a class="btn btn-outline" href="README.md" target="_blank" rel="noopener">Read the write-up</a>
+      </div>
+
+      <div class="notice">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#F5B700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
+        <p>
+          <b>This is a sandbox.</b> The real project is a Python service with a database behind it, which a
+          static site can&rsquo;t host. So the frontend below talks to a stand-in that reimplements the same
+          endpoints in your browser &mdash; identical request shapes, status codes and report maths, backed by
+          memory instead of SQL. Nothing is sent anywhere, and a reload resets it. It ships pre-loaded with
+          eight weeks of training so the reports have something to say.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="app" id="app-top">
+    <div class="wrap">
+      <nav class="tabs">
+        <button data-tab="plan" class="active">Plan a workout</button>
+        <button data-tab="upcoming">Upcoming</button>
+        <button data-tab="all">All workouts</button>
+        <button data-tab="reports">Reports</button>
+      </nav>
+
+      <!-- ---------------- Plan ---------------- -->
+      <section class="panel active" id="panel-plan">
+        <div class="card">
+          <h2 id="builder-title">New workout</h2>
+          <p class="hint">Pick exercises from the catalogue, set the prescription, and optionally put it on the calendar.</p>
+
+          <div class="row">
+            <div class="field" style="flex:2">
+              <label for="w-name">Workout name</label>
+              <input id="w-name" placeholder="Push day A">
+            </div>
+            <div class="field">
+              <label for="w-date">Scheduled for (optional)</label>
+              <input id="w-date" type="datetime-local">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="w-comment">Comment</label>
+            <textarea id="w-comment" placeholder="Felt strong — bump bench 2.5 kg next week."></textarea>
+          </div>
+
+          <label>Exercises</label>
+          <div class="ex-row ex-head">
+            <span>Exercise</span><span>Sets</span><span>Reps</span><span>Weight (kg)</span><span></span>
+          </div>
+          <div id="ex-rows"></div>
+          <button class="b" style="margin-top:8px" id="add-ex">+ Add exercise</button>
+
+          <div style="display:flex; gap:11px; margin-top:24px; flex-wrap:wrap">
+            <button class="b primary" id="save-btn">Save workout</button>
+            <button class="b" id="cancel-btn" style="display:none">Cancel edit</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------------- Upcoming ---------------- -->
+      <section class="panel" id="panel-upcoming"><div id="upcoming-list"></div></section>
+
+      <!-- ---------------- All ---------------- -->
+      <section class="panel" id="panel-all">
+        <div class="filter-row">
+          <div>
+            <label for="filter-status">Status</label>
+            <select id="filter-status">
+              <option value="">All</option>
+              <option value="pending">Pending</option>
+              <option value="completed">Completed</option>
+              <option value="skipped">Skipped</option>
+            </select>
+          </div>
+        </div>
+        <div id="all-list"></div>
+      </section>
+
+      <!-- ---------------- Reports ---------------- -->
+      <section class="panel" id="panel-reports">
+        <div class="filter-row">
+          <div>
+            <label for="report-days">Period</label>
+            <select id="report-days">
+              <option value="7">Last 7 days</option>
+              <option value="30">Last 30 days</option>
+              <option value="90" selected>Last 90 days</option>
+              <option value="">All time</option>
+            </select>
+          </div>
+        </div>
+        <div id="report-body"></div>
+      </section>
+    </div>
+  </div>
+
+  <!-- ---------------- how it works ---------------- -->
+  <section class="how">
+    <div class="wrap">
+      <p class="eyebrow">Under the hood</p>
+      <h2>What the real service does</h2>
+      <div class="how-grid">
+        <div class="how-cell">
+          <h3>Auth that actually invalidates</h3>
+          <p>A 15-minute access token plus a single-use refresh token. Refreshing rotates the pair; replaying a
+             spent token means it leaked, so every session for that user is revoked. Logout adds the access
+             token&rsquo;s <code>jti</code> to a denylist so it dies immediately rather than lingering.</p>
+        </div>
+        <div class="how-cell">
+          <h3>Ownership by construction</h3>
+          <p>Every query filters on <code>user_id</code>. Another user&rsquo;s workout returns <code>404</code>,
+             not <code>403</code> &mdash; a 403 would confirm the row exists and leak that someone owns it.</p>
+        </div>
+        <div class="how-cell">
+          <h3>Normalised, not JSON blobs</h3>
+          <p>The prescription lives on a join row; the exercise catalogue is shared and immutable. That is what
+             lets reports run <code>GROUP BY muscle_group</code> in SQL instead of parsing JSON in Python.</p>
+        </div>
+        <div class="how-cell">
+          <h3>Timestamps that survive SQLite</h3>
+          <p>SQLite drops timezone info, so a custom <code>UTCDateTime</code> type coerces to UTC on write and
+             re-attaches it on read. Without it, a session booked for 18:00 renders three hours off.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="wrap foot-inner">
+      <span>Workout Tracker &mdash; interactive demo.</span>
+      <span class="bar-spacer"></span>
+      <a class="back-link" href="../../index.html#projects">Back to projects</a>
+    </div>
+  </footer>
+</main>
+
+<div id="toast"></div>
+
+<script>
+/* =======================================================================
+   1. TRANSPORT
+   -----------------------------------------------------------------------
+   Every call in the UI goes through api(). In demo mode it is routed to a
+   local stand-in; set DEMO_MODE = false and API_BASE to a deployed origin
+   and the exact same file talks to the real FastAPI service instead. The
+   stand-in mirrors the real routes, payloads and status codes, so nothing
+   above this line has to change.
+   ===================================================================== */
+const DEMO_MODE = true;
+const API_BASE  = 'https://your-api.up.railway.app/api';   // used when DEMO_MODE = false
+
+let accessToken = null;
+let refreshToken = null;
+
+async function api(path, { method = 'GET', body = null, auth = true } = {}) {
+  if (DEMO_MODE) return demoApi(path, method, body, auth);
+
+  const headers = {};
+  if (body) headers['Content-Type'] = 'application/json';
+  if (auth && accessToken) headers['Authorization'] = 'Bearer ' + accessToken;
+  const res = await fetch(API_BASE + path, { method, headers, body: body ? JSON.stringify(body) : null });
+  if (res.status === 204) return null;
+  const data = await res.json().catch(() => null);
+  if (!res.ok) throw new Error(errText(data, res.status));
+  return data;
+}
+
+function errText(data, status) {
+  const d = data && data.detail;
+  if (typeof d === 'string') return d;
+  if (Array.isArray(d)) return d.map(e => `${(e.loc || []).slice(-1)[0]}: ${e.msg}`).join('; ');
+  return 'Request failed (' + status + ')';
+}
+
+/* =======================================================================
+   2. THE STAND-IN BACKEND
+   -----------------------------------------------------------------------
+   A miniature of the Python service: same tables, same ownership filter,
+   same volume arithmetic. It throws {status, detail} objects the way the
+   real API returns error responses.
+   ===================================================================== */
+const db = { users: [], exercises: [], workouts: [], entries: [], seq: {} };
+const nextId = t => (db.seq[t] = (db.seq[t] || 0) + 1);
+const CURRENT_USER = 1;
+
+function fail(status, detail) { const e = new Error(detail); e.status = status; throw e; }
+
+// --- exercise catalogue: name | category | muscle group | description ---
+const CATALOGUE = [
+  ["Barbell Bench Press","strength","chest","Flat barbell press; the benchmark horizontal push."],
+  ["Incline Dumbbell Press","strength","chest","Press on a 30–45° bench to bias the upper chest."],
+  ["Push-Up","strength","chest","Bodyweight horizontal press; scale by elevating hands or feet."],
+  ["Cable Chest Fly","strength","chest","Isolation fly keeping constant tension through the arc."],
+  ["Chest Dip","strength","chest","Lean forward on parallel bars to load the lower chest."],
+  ["Pull-Up","strength","back","Overhand vertical pull from a dead hang."],
+  ["Chin-Up","strength","back","Underhand vertical pull; more biceps than a pull-up."],
+  ["Barbell Row","strength","back","Bent-over horizontal pull for mid-back thickness."],
+  ["Lat Pulldown","strength","back","Cable vertical pull; the scalable pull-up substitute."],
+  ["Seated Cable Row","strength","back","Horizontal cable pull with a neutral grip."],
+  ["Face Pull","strength","back","Rope pull to the face for rear delts and scapular health."],
+  ["Back Squat","strength","legs","Barbell on the upper back; the primary knee-dominant lift."],
+  ["Front Squat","strength","legs","Barbell racked on the shoulders; more upright, more quads."],
+  ["Conventional Deadlift","strength","legs","Full-body hip hinge pulling from the floor."],
+  ["Romanian Deadlift","strength","legs","Hinge with soft knees to load the hamstrings."],
+  ["Bulgarian Split Squat","strength","legs","Rear-foot-elevated single-leg squat."],
+  ["Walking Lunge","strength","legs","Alternating forward lunges over distance."],
+  ["Leg Press","strength","legs","Machine press; heavy quad work with low stability demand."],
+  ["Standing Calf Raise","strength","legs","Loaded plantarflexion through a full stretch."],
+  ["Hip Thrust","strength","legs","Barbell across the hips; peak-contraction glute work."],
+  ["Overhead Press","strength","shoulders","Standing barbell press from the front rack."],
+  ["Dumbbell Shoulder Press","strength","shoulders","Seated or standing press with independent arms."],
+  ["Lateral Raise","strength","shoulders","Isolation raise for the side delts."],
+  ["Rear Delt Fly","strength","shoulders","Bent-over reverse fly for the posterior delts."],
+  ["Barbell Curl","strength","arms","Standing biceps curl with a straight or EZ bar."],
+  ["Hammer Curl","strength","arms","Neutral-grip curl hitting the brachialis and forearms."],
+  ["Triceps Rope Pushdown","strength","arms","Cable pushdown isolating the triceps."],
+  ["Skull Crusher","strength","arms","Lying triceps extension to the forehead."],
+  ["Close-Grip Bench Press","strength","arms","Narrow-grip press biasing the triceps."],
+  ["Plank","strength","core","Isometric front-brace hold; measured in seconds."],
+  ["Hanging Leg Raise","strength","core","Raise straight legs from a bar hang."],
+  ["Cable Crunch","strength","core","Kneeling weighted spinal flexion."],
+  ["Russian Twist","strength","core","Seated rotation for the obliques."],
+  ["Dead Bug","strength","core","Supine anti-extension drill with opposite limbs."],
+  ["Treadmill Run","cardio","full_body","Steady-state or interval running; log reps as minutes."],
+  ["Outdoor Run","cardio","full_body","Road or trail running; log reps as minutes."],
+  ["Cycling","cardio","legs","Stationary or road cycling; log reps as minutes."],
+  ["Rowing Machine","cardio","full_body","Concept2-style erg; full-body conditioning."],
+  ["Jump Rope","cardio","full_body","Skipping intervals for calves and conditioning."],
+  ["Stair Climber","cardio","legs","Continuous stepping; low-impact leg conditioning."],
+  ["Burpee","cardio","full_body","Squat-thrust to jump; high-intensity conditioning."],
+  ["Swimming","cardio","full_body","Low-impact whole-body cardio; log reps as minutes."],
+  ["Hamstring Stretch","flexibility","legs","Static seated or standing hamstring hold."],
+  ["Hip Flexor Stretch","flexibility","legs","Half-kneeling stretch for the front of the hip."],
+  ["Thoracic Rotation","flexibility","back","Open-book rotation for mid-back mobility."],
+  ["Shoulder Dislocate","flexibility","shoulders","Banded or dowel pass-through for shoulder range."],
+  ["Cat-Cow","flexibility","back","Segmental spinal flexion and extension flow."],
+  ["Couch Stretch","flexibility","legs","Deep quad and hip flexor stretch against a wall."],
+  ["Downward Dog","flexibility","full_body","Yoga posture stretching calves, hamstrings, shoulders."],
+  ["Pigeon Pose","flexibility","legs","Hip external rotation and glute stretch."]
+];
+
+function seedCatalogue() {
+  CATALOGUE.forEach(([name, category, muscle_group, description]) => {
+    db.exercises.push({ id: nextId('ex'), name, category, muscle_group, description });
+  });
+}
+
+const byName = n => db.exercises.find(e => e.name === n);
+
+/* Deterministic noise so the demo looks identical on every visit — a
+   portfolio piece shouldn't reshuffle its own numbers between screenshots. */
+function mulberry(seed) {
+  return function () {
+    seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/* Eight weeks of three-day training with a slow upward ramp, so the trend
+   line shows progressive overload rather than random walk. */
+function seedHistory() {
+  const rnd = mulberry(20260812);
+  /* Each session ends with a conditioning piece and a mobility piece. They
+     carry no load, so they contribute sets and reps but zero kilograms —
+     which is exactly why the two report charts measure different things. */
+  const template = [
+    { name: 'Push day',  lifts: [['Barbell Bench Press',4,8,60],['Incline Dumbbell Press',3,10,24],
+                                ['Overhead Press',3,8,35],['Triceps Rope Pushdown',3,12,22],['Lateral Raise',3,14,9],
+                                ['Rowing Machine',1,15,0],['Cat-Cow',1,10,0]] },
+    { name: 'Pull day',  lifts: [['Barbell Row',4,8,55],['Lat Pulldown',3,10,50],['Seated Cable Row',3,12,45],
+                                ['Barbell Curl',3,10,25],['Face Pull',3,15,18],
+                                ['Cycling',1,20,0],['Thoracic Rotation',1,10,0]] },
+    { name: 'Leg day',   lifts: [['Back Squat',5,5,85],['Romanian Deadlift',4,8,70],['Leg Press',3,12,120],
+                                ['Walking Lunge',3,12,16],['Standing Calf Raise',4,15,50],
+                                ['Treadmill Run',1,15,0],['Couch Stretch',1,10,0]] }
+  ];
+
+  const now = new Date();
+
+  // Anchor to the Monday of the current week and fill the EIGHT WEEKS BEFORE
+  // it. Every completed week is therefore a whole week — if the newest bucket
+  // were the half-finished current one, the trend line would dip at the right
+  // edge and the week-over-week delta would read as a 50% collapse.
+  const thisMonday = new Date(now);
+  thisMonday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+  thisMonday.setHours(0, 0, 0, 0);
+
+  const startOfDay = (d, h, m) => { const x = new Date(d); x.setHours(h, m, 0, 0); return x; };
+
+  for (let week = 8; week >= 1; week--) {
+    template.forEach((tpl, dayIdx) => {
+      const day = new Date(thisMonday);
+      day.setDate(thisMonday.getDate() - week * 7 + dayIdx * 2);   // Mon / Wed / Fri
+
+      // ~4% load added per week, plus a little session-to-session noise.
+      const ramp = 1 + (8 - week) * 0.04;
+      const entries = tpl.lifts.map(([exName, sets, reps, weight], i) => {
+        const ex = byName(exName);
+        const jitter = 0.985 + rnd() * 0.03;   // keep noise under the weekly ramp
+        return {
+          id: nextId('we'), workout_id: 0, exercise_id: ex.id, position: i,
+          sets, reps, weight: Math.round(weight * ramp * jitter * 2) / 2, notes: null
+        };
+      });
+
+      const scheduled = startOfDay(day, 18, 0);
+      const w = {
+        id: nextId('w'), user_id: CURRENT_USER, name: `${tpl.name} — week ${9 - week}`,
+        comment: week === 1 && dayIdx === 2 ? 'Bar speed felt quick. Adding 2.5 kg next session.' : null,
+        scheduled_at: scheduled.toISOString(),
+        status: 'completed',
+        completed_at: new Date(scheduled.getTime() + 75 * 60000).toISOString(),
+        created_at: scheduled.toISOString(), updated_at: scheduled.toISOString()
+      };
+      entries.forEach(e => { e.workout_id = w.id; db.entries.push(e); });
+      db.workouts.push(w);
+    });
+  }
+
+  // Two sessions still on the calendar, so "Upcoming" isn't empty.
+  [[1, 'Push day — week 9', 18, 0], [3, 'Pull day — week 9', 7, 30]].forEach(([offset, name, h, m]) => {
+    const d = new Date(now); d.setDate(now.getDate() + offset); d.setHours(h, m, 0, 0);
+    const tpl = template[name.startsWith('Push') ? 0 : 1];
+    const w = {
+      id: nextId('w'), user_id: CURRENT_USER, name, comment: null,
+      scheduled_at: d.toISOString(), status: 'pending', completed_at: null,
+      created_at: new Date().toISOString(), updated_at: new Date().toISOString()
+    };
+    tpl.lifts.forEach(([exName, sets, reps, weight], i) => {
+      db.entries.push({ id: nextId('we'), workout_id: w.id, exercise_id: byName(exName).id,
+                        position: i, sets, reps, weight: Math.round(weight * 1.32 * 2) / 2, notes: null });
+    });
+    db.workouts.push(w);
+  });
+}
+
+// ---- serialisers: shape the payloads exactly like the Pydantic models ----
+function entryOut(e) {
+  const ex = db.exercises.find(x => x.id === e.exercise_id);
+  return {
+    id: e.id, exercise_id: e.exercise_id, position: e.position, sets: e.sets,
+    reps: e.reps, weight: e.weight, notes: e.notes,
+    exercise: { id: ex.id, name: ex.name, description: ex.description, category: ex.category, muscle_group: ex.muscle_group },
+    volume: e.sets * e.reps * (e.weight || 0)
+  };
+}
+
+function workoutOut(w) {
+  const entries = db.entries.filter(e => e.workout_id === w.id).sort((a, b) => a.position - b.position).map(entryOut);
+  return { ...w, entries, total_volume: Math.round(entries.reduce((s, e) => s + e.volume, 0) * 100) / 100 };
+}
+
+// Ownership filter — the single line the whole authorisation model rests on.
+const owned = id => db.workouts.find(w => w.id === id && w.user_id === CURRENT_USER);
+
+function validateEntries(items) {
+  if (!items || !items.length) fail(422, 'A workout needs at least one exercise');
+  const ids = items.map(i => i.exercise_id);
+  if (new Set(ids).size !== ids.length) fail(422, 'The same exercise cannot be added twice to one workout');
+  const missing = ids.filter(id => !db.exercises.some(e => e.id === id));
+  if (missing.length) fail(422, `Unknown exercise id(s): ${missing}`);
+  items.forEach(i => {
+    if (!(i.sets > 0)) fail(422, 'sets: must be greater than 0');
+    if (!(i.reps > 0)) fail(422, 'reps: must be greater than 0');
+    if (i.weight < 0) fail(422, 'weight: must be non-negative');
+  });
+}
+
+async function demoApi(path, method, body) {
+  await new Promise(r => setTimeout(r, 90));          // a little latency, so loading states are real
+  const [rawPath, qs] = path.split('?');
+  const q = new URLSearchParams(qs || '');
+
+  try {
+    if (rawPath === '/exercises' && method === 'GET') {
+      let list = db.exercises.slice();
+      if (q.get('category')) list = list.filter(e => e.category === q.get('category'));
+      if (q.get('muscle_group')) list = list.filter(e => e.muscle_group === q.get('muscle_group'));
+      return list.sort((a, b) => a.muscle_group.localeCompare(b.muscle_group) || a.name.localeCompare(b.name));
+    }
+
+    if (rawPath === '/workouts' && method === 'GET') {
+      let list = db.workouts.filter(w => w.user_id === CURRENT_USER);
+      if (q.get('upcoming') === 'true') {
+        const now = Date.now();
+        list = list.filter(w => w.status === 'pending' && w.scheduled_at && Date.parse(w.scheduled_at) >= now);
+      } else if (q.get('status')) {
+        list = list.filter(w => w.status === q.get('status'));
+      }
+      const dir = q.get('order') === 'desc' ? -1 : 1;
+      list.sort((a, b) => {
+        if (!a.scheduled_at) return 1;                 // unscheduled sorts last
+        if (!b.scheduled_at) return -1;
+        return dir * (Date.parse(a.scheduled_at) - Date.parse(b.scheduled_at)) || a.id - b.id;
+      });
+      return list.map(workoutOut);
+    }
+
+    if (rawPath === '/workouts' && method === 'POST') {
+      if (!body.name || !body.name.trim()) fail(422, 'name: must not be empty');
+      validateEntries(body.exercises);
+      const w = {
+        id: nextId('w'), user_id: CURRENT_USER, name: body.name.trim(),
+        comment: body.comment || null, scheduled_at: body.scheduled_at || null,
+        status: 'pending', completed_at: null,
+        created_at: new Date().toISOString(), updated_at: new Date().toISOString()
+      };
+      body.exercises.forEach((i, idx) => db.entries.push({
+        id: nextId('we'), workout_id: w.id, exercise_id: i.exercise_id, position: idx,
+        sets: i.sets, reps: i.reps, weight: i.weight || 0, notes: i.notes || null
+      }));
+      db.workouts.push(w);
+      return workoutOut(w);
+    }
+
+    const idMatch = rawPath.match(/^\/workouts\/(\d+)$/);
+    if (idMatch) {
+      const w = owned(Number(idMatch[1]));
+      if (!w) fail(404, 'Workout not found');
+
+      if (method === 'GET') return workoutOut(w);
+
+      if (method === 'PATCH') {
+        if (body.exercises !== undefined) {
+          validateEntries(body.exercises);
+          db.entries = db.entries.filter(e => e.workout_id !== w.id);
+          body.exercises.forEach((i, idx) => db.entries.push({
+            id: nextId('we'), workout_id: w.id, exercise_id: i.exercise_id, position: idx,
+            sets: i.sets, reps: i.reps, weight: i.weight || 0, notes: i.notes || null
+          }));
+        }
+        ['name', 'comment', 'scheduled_at'].forEach(f => { if (body[f] !== undefined) w[f] = body[f]; });
+        if (body.status !== undefined && body.status !== null) {
+          w.status = body.status;
+          w.completed_at = body.status === 'completed' ? new Date().toISOString() : null;
+        }
+        w.updated_at = new Date().toISOString();
+        return workoutOut(w);
+      }
+
+      if (method === 'DELETE') {
+        db.entries = db.entries.filter(e => e.workout_id !== w.id);
+        db.workouts = db.workouts.filter(x => x.id !== w.id);
+        return null;
+      }
+    }
+
+    const completeMatch = rawPath.match(/^\/workouts\/(\d+)\/complete$/);
+    if (completeMatch && method === 'POST') {
+      const w = owned(Number(completeMatch[1]));
+      if (!w) fail(404, 'Workout not found');
+      w.status = 'completed';
+      w.completed_at = new Date().toISOString();
+      w.updated_at = w.completed_at;
+      return workoutOut(w);
+    }
+
+    if (rawPath === '/reports/summary' && method === 'GET') return reportSummary(q);
+    if (rawPath === '/reports/history' && method === 'GET') {
+      return db.workouts
+        .filter(w => w.user_id === CURRENT_USER && w.status === 'completed')
+        .sort((a, b) => Date.parse(b.completed_at) - Date.parse(a.completed_at))
+        .slice(0, Number(q.get('limit') || 25))
+        .map(workoutOut);
+    }
+
+    fail(404, 'Not Found');
+  } catch (err) {
+    if (err.status) throw new Error(err.message);
+    throw err;
+  }
+}
+
+/* The report maths, mirroring the SQL aggregation in routers/reports.py. */
+function reportSummary(q) {
+  const days = q.get('days');
+  const start = days ? Date.now() - Number(days) * 86400000 : null;
+
+  const all = db.workouts.filter(w => w.user_id === CURRENT_USER);
+  const completed = all.filter(w => w.status === 'completed' && (!start || Date.parse(w.completed_at) >= start));
+
+  let sets = 0, reps = 0, volume = 0;
+  const exerciseIds = new Set();
+  const cat = {}, mus = {}, weekly = {};
+
+  completed.forEach(w => {
+    const week = weekKey(new Date(w.completed_at));
+    db.entries.filter(e => e.workout_id === w.id).forEach(e => {
+      const ex = db.exercises.find(x => x.id === e.exercise_id);
+      const v = e.sets * e.reps * (e.weight || 0);
+      sets += e.sets; reps += e.sets * e.reps; volume += v;
+      exerciseIds.add(e.exercise_id);
+      bump(cat, ex.category, w.id, e.sets, e.sets * e.reps, v);
+      bump(mus, ex.muscle_group, w.id, e.sets, e.sets * e.reps, v);
+      weekly[week] = (weekly[week] || 0) + v;
+    });
+  });
+
+  const flat = o => Object.entries(o)
+    .map(([label, d]) => ({ label, workouts: d.workouts.size, sets: d.sets, reps: d.reps, volume: Math.round(d.volume * 100) / 100 }))
+    .sort((a, b) => b.volume - a.volume);
+
+  return {
+    period_start: start ? new Date(start).toISOString() : null,
+    period_end: null,
+    workouts_completed: completed.length,
+    workouts_pending: all.filter(w => w.status === 'pending').length,
+    workouts_skipped: all.filter(w => w.status === 'skipped').length,
+    total_sets: sets, total_reps: reps,
+    total_volume: Math.round(volume * 100) / 100,
+    distinct_exercises: exerciseIds.size,
+    by_category: flat(cat),
+    by_muscle_group: flat(mus),
+    // Not in the Python API — the demo adds it so the trend chart has a series.
+    weekly_volume: Object.entries(weekly).sort().map(([week, v]) => ({ week, volume: Math.round(v) }))
+  };
+}
+
+function bump(acc, key, workoutId, sets, reps, volume) {
+  const d = acc[key] || (acc[key] = { workouts: new Set(), sets: 0, reps: 0, volume: 0 });
+  d.workouts.add(workoutId); d.sets += sets; d.reps += reps; d.volume += volume;
+}
+
+function weekKey(d) {
+  const x = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  x.setUTCDate(x.getUTCDate() - ((x.getUTCDay() + 6) % 7));   // back to Monday
+  return x.toISOString().slice(0, 10);
+}
+
+/* =======================================================================
+   3. UI
+   ===================================================================== */
+let exerciseCatalog = [];
+let editingId = null;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+let toastTimer;
+function toast(msg, kind = 'ok') {
+  const el = $('toast');
+  el.textContent = msg;
+  el.className = 'show ' + kind;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = ''; }, 3200);
+}
+
+const fmtInt = n => Math.round(n).toLocaleString();
+function fmtDate(iso) {
+  if (!iso) return 'Not scheduled';
+  return new Date(iso).toLocaleString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+}
+function fmtDay(iso) {
+  return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+}
+function toLocalInput(iso) {
+  const d = new Date(iso), p = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
+// ---- tabs ----
+document.querySelectorAll('nav.tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('section.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    $('panel-' + btn.dataset.tab).classList.add('active');
+    if (btn.dataset.tab === 'upcoming') loadUpcoming();
+    if (btn.dataset.tab === 'all') loadAll();
+    if (btn.dataset.tab === 'reports') loadReports();
+  });
+});
+const goToTab = name => document.querySelector(`nav.tabs button[data-tab="${name}"]`).click();
+
+// ---- builder ----
+function exerciseOptions(selectedId) {
+  const groups = {};
+  exerciseCatalog.forEach(ex => (groups[ex.muscle_group] ||= []).push(ex));
+  return Object.keys(groups).sort().map(g => `
+    <optgroup label="${esc(g.replace('_', ' '))}">
+      ${groups[g].map(ex => `<option value="${ex.id}"${ex.id === selectedId ? ' selected' : ''}>${esc(ex.name)}</option>`).join('')}
+    </optgroup>`).join('');
+}
+
+function addExerciseRow(entry = null) {
+  const row = document.createElement('div');
+  row.className = 'ex-row';
+  row.innerHTML = `
+    <select class="ex-id">${exerciseOptions(entry && entry.exercise_id)}</select>
+    <input class="ex-sets"   type="number" min="1" max="100"  value="${entry ? entry.sets : 3}"    aria-label="Sets">
+    <input class="ex-reps"   type="number" min="1" max="1000" value="${entry ? entry.reps : 10}"   aria-label="Reps">
+    <input class="ex-weight" type="number" min="0" max="1000" step="0.5" value="${entry ? entry.weight : 0}" aria-label="Weight in kilograms">
+    <button class="x" title="Remove" aria-label="Remove exercise">&times;</button>`;
+  row.querySelector('.x').addEventListener('click', () => row.remove());
+  $('ex-rows').appendChild(row);
+}
+
+const collectExercises = () => [...document.querySelectorAll('#ex-rows .ex-row')].map(r => ({
+  exercise_id: Number(r.querySelector('.ex-id').value),
+  sets: Number(r.querySelector('.ex-sets').value),
+  reps: Number(r.querySelector('.ex-reps').value),
+  weight: Number(r.querySelector('.ex-weight').value)
+}));
+
+function resetBuilder() {
+  editingId = null;
+  $('builder-title').textContent = 'New workout';
+  $('save-btn').textContent = 'Save workout';
+  $('cancel-btn').style.display = 'none';
+  $('w-name').value = ''; $('w-date').value = ''; $('w-comment').value = '';
+  $('ex-rows').innerHTML = '';
+  addExerciseRow();
+}
+
+async function saveWorkout() {
+  const name = $('w-name').value.trim();
+  const exercises = collectExercises();
+  if (!name) return toast('Give the workout a name', 'error');
+  if (!exercises.length) return toast('Add at least one exercise', 'error');
+
+  const local = $('w-date').value;
+  const body = {
+    name,
+    comment: $('w-comment').value.trim() || null,
+    scheduled_at: local ? new Date(local).toISOString() : null,   // local → UTC
+    exercises
+  };
+  try {
+    if (editingId) { await api('/workouts/' + editingId, { method: 'PATCH', body }); toast('Workout updated'); }
+    else           { await api('/workouts', { method: 'POST', body }); toast('Workout saved'); }
+    resetBuilder();
+    await refreshAll();
+  } catch (err) { toast(err.message, 'error'); }
+}
+
+async function editWorkout(id) {
+  try {
+    const w = await api('/workouts/' + id);
+    editingId = id;
+    $('builder-title').textContent = 'Editing: ' + w.name;
+    $('save-btn').textContent = 'Save changes';
+    $('cancel-btn').style.display = '';
+    $('w-name').value = w.name;
+    $('w-comment').value = w.comment || '';
+    $('w-date').value = w.scheduled_at ? toLocalInput(w.scheduled_at) : '';
+    $('ex-rows').innerHTML = '';
+    w.entries.forEach(addExerciseRow);
+    goToTab('plan');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (err) { toast(err.message, 'error'); }
+}
+
+async function completeWorkout(id) {
+  try { await api('/workouts/' + id + '/complete', { method: 'POST' }); toast('Marked complete'); await refreshAll(); }
+  catch (err) { toast(err.message, 'error'); }
+}
+async function deleteWorkout(id) {
+  try {
+    await api('/workouts/' + id, { method: 'DELETE' });
+    toast('Workout deleted');
+    if (editingId === id) resetBuilder();
+    await refreshAll();
+  } catch (err) { toast(err.message, 'error'); }
+}
+
+// ---- workout cards ----
+function workoutCard(w) {
+  const rows = w.entries.map(e => `
+    <tr>
+      <td>${esc(e.exercise.name)}</td>
+      <td class="num">${e.sets} &times; ${e.reps}</td>
+      <td class="num">${e.weight ? e.weight + ' kg' : '&mdash;'}</td>
+      <td class="num">${e.volume ? fmtInt(e.volume) : '&mdash;'}</td>
+    </tr>`).join('');
+  return `
+    <article class="workout">
+      <div class="workout-head">
+        <div style="flex:1; min-width:0">
+          <div class="workout-title">${esc(w.name)}</div>
+          <div class="workout-meta">${fmtDate(w.scheduled_at)}${w.total_volume ? ' &middot; ' + fmtInt(w.total_volume) + ' kg' : ''}</div>
+        </div>
+        <div class="workout-actions">
+          <span class="pill ${w.status}">${w.status}</span>
+          ${w.status !== 'completed' ? `<button class="b" data-act="complete" data-id="${w.id}">Complete</button>` : ''}
+          <button class="b" data-act="edit" data-id="${w.id}">Edit</button>
+          <button class="x" data-act="delete" data-id="${w.id}" title="Delete" aria-label="Delete workout">&times;</button>
+        </div>
+      </div>
+      <table class="entries">
+        <thead><tr><th>Exercise</th><th class="num">Sets &times; reps</th><th class="num">Weight</th><th class="num">Volume</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      ${w.comment ? `<div class="comment">${esc(w.comment)}</div>` : ''}
+    </article>`;
+}
+
+function wireCardActions(container) {
+  container.querySelectorAll('[data-act]').forEach(btn => {
+    const id = Number(btn.dataset.id);
+    btn.addEventListener('click', () => {
+      if (btn.dataset.act === 'complete') completeWorkout(id);
+      if (btn.dataset.act === 'edit') editWorkout(id);
+      if (btn.dataset.act === 'delete') deleteWorkout(id);
+    });
+  });
+}
+
+async function loadUpcoming() {
+  try {
+    const list = await api('/workouts?upcoming=true&order=asc');
+    const el = $('upcoming-list');
+    el.innerHTML = list.length ? list.map(workoutCard).join('')
+      : '<div class="empty">Nothing scheduled ahead. Plan a workout and give it a date.</div>';
+    wireCardActions(el);
+  } catch (err) { toast(err.message, 'error'); }
+}
+
+async function loadAll() {
+  try {
+    const status = $('filter-status').value;
+    const list = await api('/workouts?order=desc' + (status ? '&status=' + status : ''));
+    const el = $('all-list');
+    el.innerHTML = list.length ? list.map(workoutCard).join('') : '<div class="empty">No workouts here yet.</div>';
+    wireCardActions(el);
+  } catch (err) { toast(err.message, 'error'); }
+}
+
+/* =======================================================================
+   4. CHARTS
+   -----------------------------------------------------------------------
+   Each chart plots ONE series, so colour carries no identity: length and
+   position do the encoding and every mark wears the same hue. That is why
+   there is no legend — the title already names what is plotted.
+   ===================================================================== */
+
+/* Horizontal bars: magnitude comparison across categories.
+   Marks are capped at 22px, square at the baseline, 4px rounded at the
+   data end; the value rides the tip and each row carries a hover tooltip. */
+function barChart(items, key, unit) {
+  if (!items.length) return '<div class="empty">No completed workouts in this period.</div>';
+  const max = Math.max(...items.map(i => i[key])) || 1;
+  const sorted = items.slice().sort((a, b) => b[key] - a[key]);
+  return `<div class="bars">` + sorted.map(i => `
+    <div class="bar-row" tabindex="0"
+         data-tip="${esc(i.label.replace('_', ' '))}|${fmtInt(i[key])}${unit} · ${i.workouts} session${i.workouts === 1 ? '' : 's'}">
+      <div class="bar-label">${esc(i.label.replace('_', ' '))}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.max(1.5, (i[key] / max) * 100)}%"></div></div>
+      <div class="bar-val">${fmtInt(i[key])}${unit}</div>
+    </div>`).join('') + `</div>`;
+}
+
+function barTable(items, measure) {
+  return `<table class="dataview"><thead><tr>
+      <th>${measure}</th><th class="num">Volume (kg)</th><th class="num">Sets</th><th class="num">Reps</th><th class="num">Sessions</th>
+    </tr></thead><tbody>` + items.map(i => `<tr>
+      <td style="text-transform:capitalize">${esc(i.label.replace('_', ' '))}</td>
+      <td class="num">${fmtInt(i.volume)}</td><td class="num">${fmtInt(i.sets)}</td>
+      <td class="num">${fmtInt(i.reps)}</td><td class="num">${i.workouts}</td>
+    </tr>`).join('') + `</tbody></table>`;
+}
+
+/* Trend over time: single-series line with a 10%-opacity area wash, a 2px
+   stroke, an 8px end marker with a surface ring, and a crosshair that snaps
+   to the nearest week so the reader aims at a date, not a 2px line. */
+function lineChart(points) {
+  if (points.length < 2) return '<div class="empty">Not enough completed weeks to plot a trend yet.</div>';
+
+  const W = 780, H = 240, ML = 54, MR = 22, MT = 16, MB = 34;
+  const iw = W - ML - MR, ih = H - MT - MB;
+  const max = Math.max(...points.map(p => p.volume));
+  const niceMax = Math.ceil(max / 2500) * 2500 || 2500;
+
+  const x = i => ML + (points.length === 1 ? iw / 2 : (i / (points.length - 1)) * iw);
+  const y = v => MT + ih - (v / niceMax) * ih;
+
+  const line = points.map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(p.volume).toFixed(1)}`).join(' ');
+  const area = `${line} L${x(points.length - 1).toFixed(1)},${MT + ih} L${x(0).toFixed(1)},${MT + ih} Z`;
+
+  const ticks = [0, 0.25, 0.5, 0.75, 1].map(f => Math.round(niceMax * f));
+  const grid = ticks.map(t => `
+    <line x1="${ML}" y1="${y(t).toFixed(1)}" x2="${W - MR}" y2="${y(t).toFixed(1)}" stroke="var(--grid)" stroke-width="1"/>
+    <text x="${ML - 10}" y="${(y(t) + 4).toFixed(1)}" text-anchor="end"
+          font-family="Space Mono, monospace" font-size="10.5" fill="#8A8F9B">${t.toLocaleString()}</text>`).join('');
+
+  // Label only the endpoint — a value on every point is noise.
+  const last = points[points.length - 1];
+  const lastX = x(points.length - 1), lastY = y(last.volume);
+
+  const xLabels = points.map((p, i) =>
+    (i % Math.ceil(points.length / 6) === 0 || i === points.length - 1)
+      ? `<text x="${x(i).toFixed(1)}" y="${H - 10}" text-anchor="middle"
+              font-family="Space Mono, monospace" font-size="10.5" fill="#8A8F9B">${fmtDay(p.week)}</text>` : '').join('');
+
+  const hits = points.map((p, i) =>
+    `<rect class="hit" x="${(x(i) - iw / (points.length - 1) / 2).toFixed(1)}" y="${MT}"
+           width="${(iw / (points.length - 1)).toFixed(1)}" height="${ih}" fill="transparent"
+           data-x="${x(i).toFixed(1)}" data-y="${y(p.volume).toFixed(1)}"
+           data-week="${fmtDay(p.week)}" data-vol="${fmtInt(p.volume)}"></rect>`).join('');
+
+  return `
+    <div class="linechart">
+      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Weekly training volume trend">
+        ${grid}
+        <path d="${area}" fill="var(--data-wash)"/>
+        <path d="${line}" fill="none" stroke="var(--data)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+        <line class="crosshair" x1="0" y1="${MT}" x2="0" y2="${MT + ih}" stroke="var(--grid)" stroke-width="1" opacity="0"/>
+        <circle class="focus-dot" r="4.5" fill="var(--data)" stroke="#fff" stroke-width="2" opacity="0"/>
+        <circle cx="${lastX.toFixed(1)}" cy="${lastY.toFixed(1)}" r="4.5" fill="var(--data)" stroke="#fff" stroke-width="2"/>
+        <text x="${(lastX - 6).toFixed(1)}" y="${(lastY - 13).toFixed(1)}" text-anchor="end"
+              font-family="Space Mono, monospace" font-size="11.5" font-weight="700" fill="#1B2338">${fmtInt(last.volume)} kg</text>
+        ${xLabels}
+        ${hits}
+      </svg>
+      <div class="tt" id="line-tt"></div>
+    </div>`;
+}
+
+function wireLineChart(root) {
+  const box = root.querySelector('.linechart');
+  if (!box) return;
+  const svg = box.querySelector('svg');
+  const tt = box.querySelector('.tt');
+  const cross = svg.querySelector('.crosshair');
+  const dot = svg.querySelector('.focus-dot');
+
+  const show = hit => {
+    // The SVG scales to its container, so viewBox units must be converted to
+    // CSS pixels before the tooltip (an HTML element) can be positioned.
+    const vbW = 780, vbH = 240;
+    const rect = svg.getBoundingClientRect();
+    const sx = rect.width / vbW, sy = rect.height / vbH;
+    const dx = Number(hit.dataset.x), dy = Number(hit.dataset.y);
+
+    cross.setAttribute('x1', dx); cross.setAttribute('x2', dx); cross.setAttribute('opacity', '1');
+    dot.setAttribute('cx', dx); dot.setAttribute('cy', dy); dot.setAttribute('opacity', '1');
+
+    tt.innerHTML = '';
+    const v = document.createElement('span'); v.className = 'tv';
+    v.appendChild(document.createTextNode(hit.dataset.vol + ' kg'));
+    const l = document.createElement('span'); l.className = 'tl';
+    const key = document.createElement('span'); key.className = 'key';
+    l.appendChild(key); l.appendChild(document.createTextNode('week of ' + hit.dataset.week));
+    tt.appendChild(v); tt.appendChild(l);
+    tt.style.left = (dx * sx) + 'px';
+    tt.style.top = (dy * sy - 12) + 'px';
+    tt.style.opacity = '1';
+  };
+  const hide = () => { tt.style.opacity = '0'; cross.setAttribute('opacity', '0'); dot.setAttribute('opacity', '0'); };
+
+  svg.querySelectorAll('.hit').forEach(hit => {
+    hit.setAttribute('tabindex', '0');
+    hit.addEventListener('pointerenter', () => show(hit));
+    hit.addEventListener('focus', () => show(hit));
+    hit.addEventListener('blur', hide);
+  });
+  svg.addEventListener('pointerleave', hide);
+}
+
+function wireBarTooltips(root) {
+  root.querySelectorAll('.bar-row[data-tip]').forEach(row => {
+    let tip;
+    const show = () => {
+      const [label, value] = row.dataset.tip.split('|');
+      tip = document.createElement('div');
+      tip.className = 'tt';
+      const v = document.createElement('span'); v.className = 'tv'; v.appendChild(document.createTextNode(value));
+      const l = document.createElement('span'); l.className = 'tl';
+      const key = document.createElement('span'); key.className = 'key';
+      l.appendChild(key); l.appendChild(document.createTextNode(label));
+      tip.appendChild(v); tip.appendChild(l);
+      row.style.position = 'relative';
+      row.appendChild(tip);
+      requestAnimationFrame(() => {
+        tip.style.left = '50%';
+        tip.style.top = '-4px';
+        tip.style.opacity = '1';
+      });
+    };
+    const hide = () => { if (tip) { tip.remove(); tip = null; } };
+    row.addEventListener('pointerenter', show);
+    row.addEventListener('pointerleave', hide);
+    row.addEventListener('focus', show);
+    row.addEventListener('blur', hide);
+  });
+}
+
+// ---- reports ----
+async function loadReports() {
+  try {
+    const days = $('report-days').value;
+    const r = await api('/reports/summary' + (days ? '?days=' + days : ''));
+    const history = await api('/reports/history?limit=8');
+
+    // Only loaded work belongs on a kilograms chart; a zero-length bar for
+    // "full body" cardio would read as a rendering fault, not as data.
+    const loaded = r.by_muscle_group.filter(i => i.volume > 0);
+
+    // Trend delta: the newest complete week against the one before it.
+    const wk = r.weekly_volume;
+    let delta = '';
+    if (wk.length >= 2) {
+      const a = wk[wk.length - 2].volume, b = wk[wk.length - 1].volume;
+      const pct = a ? Math.round(((b - a) / a) * 100) : 0;
+      const cls = pct > 0 ? 'up' : pct < 0 ? 'down' : 'flat';
+      const sign = pct > 0 ? '+' : '';
+      delta = `<span class="delta ${cls}">${sign}${pct}%</span> vs the week before`;
+    }
+
+    $('report-body').innerHTML = `
+      <div class="hero-fig">
+        <div class="k">Total volume lifted</div>
+        <div class="v">${fmtInt(r.total_volume)}<small>kg</small></div>
+        <p class="sub">${r.workouts_completed} completed session${r.workouts_completed === 1 ? '' : 's'}${delta ? ' &middot; ' + delta : ''}</p>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="k">Total sets</div><div class="v">${fmtInt(r.total_sets)}</div></div>
+        <div class="stat"><div class="k">Total reps</div><div class="v">${fmtInt(r.total_reps)}</div></div>
+        <div class="stat"><div class="k">Exercises used</div><div class="v">${r.distinct_exercises}</div></div>
+        <div class="stat"><div class="k">Still pending</div><div class="v">${r.workouts_pending}</div></div>
+      </div>
+
+      <div class="card">
+        <div class="chart-head">
+          <div>
+            <h2>Weekly training volume</h2>
+            <p class="hint" style="margin-bottom:0">Kilograms lifted per week &mdash; sets &times; reps &times; weight, summed.</p>
+          </div>
+          <span class="spacer"></span>
+          <button class="toggle-table" data-target="tbl-weekly">Table</button>
+        </div>
+        ${lineChart(r.weekly_volume)}
+        <div id="tbl-weekly" hidden>
+          <table class="dataview">
+            <thead><tr><th>Week beginning</th><th class="num">Volume (kg)</th></tr></thead>
+            <tbody>${r.weekly_volume.map(p => `<tr><td>${fmtDay(p.week)}</td><td class="num">${fmtInt(p.volume)}</td></tr>`).join('')}</tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="chart-head">
+          <div>
+            <h2>Volume by muscle group</h2>
+            <p class="hint" style="margin-bottom:0">Loaded work only &mdash; conditioning and mobility carry no weight, so they contribute no kilograms.</p>
+          </div>
+          <span class="spacer"></span>
+          <button class="toggle-table" data-target="tbl-muscle">Table</button>
+        </div>
+        ${barChart(loaded, 'volume', ' kg')}
+        <div id="tbl-muscle" hidden>${barTable(loaded, 'Muscle group')}</div>
+      </div>
+
+      <div class="card">
+        <div class="chart-head">
+          <div>
+            <h2>Sets by category</h2>
+            <p class="hint" style="margin-bottom:0">Counted in sets, not kilograms &mdash; volume is meaningless for a run or a stretch.</p>
+          </div>
+          <span class="spacer"></span>
+          <button class="toggle-table" data-target="tbl-cat">Table</button>
+        </div>
+        ${barChart(r.by_category, 'sets', ' sets')}
+        <div id="tbl-cat" hidden>${barTable(r.by_category, 'Category')}</div>
+      </div>
+
+      <div class="card">
+        <h2>Recent sessions</h2>
+        <p class="hint">The last completed workouts, most recent first.</p>
+        ${history.length ? `<table class="dataview">
+            <thead><tr><th>Session</th><th>Completed</th><th class="num">Volume (kg)</th></tr></thead>
+            <tbody>${history.map(w => `<tr>
+              <td>${esc(w.name)}</td><td>${fmtDate(w.completed_at)}</td>
+              <td class="num">${fmtInt(w.total_volume)}</td></tr>`).join('')}</tbody>
+          </table>` : '<div class="empty">Complete a workout and it will show up here.</div>'}
+      </div>`;
+
+    const body = $('report-body');
+    wireLineChart(body);
+    wireBarTooltips(body);
+    body.querySelectorAll('.toggle-table').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const t = $(btn.dataset.target);
+        t.hidden = !t.hidden;
+        btn.textContent = t.hidden ? 'Table' : 'Chart view';
+      });
+    });
+  } catch (err) { toast(err.message, 'error'); }
+}
+
+async function refreshAll() { await Promise.all([loadUpcoming(), loadAll(), loadReports()]); }
+
+// ---- boot ----
+(async function init() {
+  seedCatalogue();
+  seedHistory();
+  exerciseCatalog = await api('/exercises');
+  resetBuilder();
+  $('add-ex').addEventListener('click', () => addExerciseRow());
+  $('save-btn').addEventListener('click', saveWorkout);
+  $('cancel-btn').addEventListener('click', resetBuilder);
+  $('filter-status').addEventListener('change', loadAll);
+  $('report-days').addEventListener('change', loadReports);
+  await refreshAll();
+})();
+</script>
+</body>
+</html>

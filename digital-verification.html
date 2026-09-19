@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Design &amp; Verification | Liam Rose-Berthiaume</title>
+<meta name="description" content="RTL in SystemVerilog, FPGA bring-up on an AMD Artix-7, and building toward UVM verification of a RISC-V core — documented as it happens.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C41E3A'%3E%3Cpath d='M13 2L4 14h6l-1 8 9-12h-6l1-8z'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<div id="progressBar"></div>
+
+<header>
+  <nav class="wrap">
+    <a href="index.html#top" class="brand">
+      <img src="images/rose-electrical-logo.png" alt="Liam Rose-Berthiaume">
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#projects">Projects</a></li>
+      <li><a href="index.html#skills">Skills</a></li>
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><span></span></button>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <section class="category-hero">
+    <div class="wrap">
+      <div class="breadcrumb">
+        <a href="index.html#top">Home</a>
+        <span>/</span>
+        <a href="index.html#skills">Skills</a>
+        <span>/</span>
+        <span>Digital Design &amp; Verification</span>
+      </div>
+      <div class="category-icon-badge">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 15h3V9h4v6h4V9h4v6h3"/></svg>
+      </div>
+      <h1>Digital Design &amp; Verification</h1>
+      <p>Everywhere else on this site shows finished work. This page shows work in progress &mdash; a deliberate run at digital design and hardware verification, from logic gates through to a UVM testbench for a RISC-V processor core. I'd rather show the build than wait nine months and present the result with no working shown.</p>
+
+      <!-- Update these three values as you move through the plan. -->
+      <div class="status-strip">
+        <div>
+          <span class="k">Started</span>
+          <span class="v">August 2026</span>
+        </div>
+        <div>
+          <span class="k">Currently</span>
+          <span class="v"><span class="led"></span>SystemVerilog RTL &amp; FPGA toolchain</span>
+        </div>
+        <div>
+          <span class="k">Next deliverable</span>
+          <span class="v">UART transceiver &middot; October 2026</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="category-body">
+    <div class="wrap">
+
+      <!-- ===== WHERE THIS IS NOW ===== -->
+      <div class="now-grid">
+        <div class="now-col">
+          <h3>Built so far</h3>
+
+          <div class="now-item">
+            <h4>Digital logic foundations</h4>
+            <p>Combinational and sequential design, Karnaugh minimisation, finite state machines, and the timing that governs all of it &mdash; setup and hold constraints, clock skew, metastability, and why a two-flop synchroniser is the standard answer to crossing clock domains.</p>
+          </div>
+
+          <div class="now-item">
+            <h4>SystemVerilog RTL</h4>
+            <p>Writing synthesisable RTL rather than code that merely simulates: the three-block FSM idiom, blocking versus non-blocking assignment, and the handful of mistakes that silently infer a latch or produce hardware that behaves differently from the simulation.</p>
+          </div>
+
+          <div class="now-item">
+            <h4>FPGA toolchain, end to end</h4>
+            <p>Vivado from RTL to bitstream on an AMD Artix-7 &mdash; synthesis, pin constraints, reading a timing report, and getting a design onto real hardware rather than leaving it in a waveform viewer.</p>
+          </div>
+        </div>
+
+        <div class="now-col next">
+          <h3>Next up</h3>
+
+          <div class="now-item">
+            <h4>UART transceiver</h4>
+            <p>Transmitter and receiver written from the RS-232 frame spec rather than from a tutorial, verified with a self-checking testbench driven by external test vectors, then synthesised onto the Artix-7 and talking to a terminal over USB. The write-up will include the bugs, not just the result.</p>
+            <span class="now-when">Targeting October 2026</span>
+          </div>
+
+          <div class="now-item">
+            <h4>Where this is going</h4>
+            <p>A UVM verification environment for an open-source RISC-V core &mdash; constrained-random instruction generation biased toward pipeline hazards, lockstep comparison against an instruction-set simulator, and functional coverage closure. That's the destination; everything above is the road to it.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tool-row">
+        <span class="tool-chip">SystemVerilog</span>
+        <span class="tool-chip">Vivado</span>
+        <span class="tool-chip">XSim</span>
+        <span class="tool-chip">AMD Artix-7</span>
+        <span class="tool-chip">GTKWave</span>
+        <span class="tool-chip">RISC-V</span>
+      </div>
+
+      <div style="height:64px"></div>
+
+      <!-- ===== WHY ===== -->
+      <div class="prose-block">
+        <p class="eyebrow">Why this</p>
+        <h2>Making it work once is the easy half</h2>
+        <p>On a modern chip, verification absorbs more engineering effort than design does &mdash; and it's a genuinely different discipline. A designer asks whether the thing works. A verification engineer asks what input would prove it doesn't, builds the machinery to go looking, and then has to show the machinery itself is trustworthy.</p>
+        <p>That's the part I find interesting: a testbench you've never seen fail is a testbench you have no evidence works. So every project on this page gets the same treatment &mdash; plant a fault, confirm the checker catches it, and write down what it took to find.</p>
+      </div>
+
+      <!-- ===== BUILD LOG ===== -->
+      <p class="eyebrow">Build log</p>
+      <h2 style="font-size:clamp(24px,2.8vw,32px);margin-bottom:34px;">What's actually happened</h2>
+
+      <!--
+        Add a new entry at the TOP as each milestone lands. Keep them
+        outcome-based rather than schedule-based: "built X, here's what broke"
+        ages well, "week 12 of 36" goes stale the moment you fall behind.
+      -->
+      <div class="log">
+
+        <div class="log-entry">
+          <time datetime="2026-09">September 2026</time>
+          <h4>First design running on real hardware</h4>
+            <p>Vivado installed and working end to end: a design written, synthesised, constrained to the board's actual pins, and programmed onto an Artix-7. Most of the time went into the constraints file rather than the RTL, which was the lesson.</p>
+        </div>
+
+        <div class="log-entry">
+          <time datetime="2026-08">August 2026</time>
+          <h4>Foundations &mdash; gates through state machines</h4>
+          <p>Worked through combinational and sequential logic properly: CMOS at transistor level, K-map minimisation with don't-cares, static hazards, and finite state machines built both from a spec and reverse-engineered from a schematic. Finished on timing &mdash; setup, hold, clock skew, metastability and synchroniser design.</p>
+        </div>
+
+      </div>
+
+      <div style="height:56px"></div>
+      <a href="index.html#contact" class="btn btn-primary">Get in touch</a>
+
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-brand">
+      <img src="images/rose-electrical-logo-white.png" alt="Liam Rose-Berthiaume">
+    </div>
+    <ul class="foot-links">
+      <li><a href="index.html#projects">Projects</a></li>
+      <li><a href="index.html#skills">Skills</a></li>
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+    <div class="foot-social">
+      <a href="https://github.com/liamroseberthiaume/liamroseberthiaume.github.io" target="_blank" aria-label="GitHub">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.4a2.8 2.8 0 00-.8-2.2c2.6-.3 5.3-1.3 5.3-5.8a4.5 4.5 0 00-1.2-3.1 4.2 4.2 0 00-.1-3.2s-1-.3-3.2 1.2a11 11 0 00-5.8 0C7.9 4 6.9 4.3 6.9 4.3a4.2 4.2 0 00-.1 3.2A4.5 4.5 0 005.6 10.6c0 4.5 2.7 5.5 5.3 5.8a2.8 2.8 0 00-.8 2.2V22"/></svg>
+      </a>
+      <a href="https://linkedin.com/in/liam-rose-berthiaume-264564313" target="_blank" aria-label="LinkedIn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/><path d="M10 9v12M10 13a4 4 0 018 0v8"/></svg>
+      </a>
+    </div>
+    <p class="copyright">&copy; <span id="year"></span> Liam Rose-Berthiaume.</p>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  const progressBar = document.getElementById('progressBar');
+  function updateProgress(){
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    progressBar.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive:true });
+  updateProgress();
+
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  navToggle.addEventListener('click', () => {
+    const open = navLinks.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', open);
+  });
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    navToggle.setAttribute('aria-expanded', false);
+  }));
+
+  const toTop = document.createElement('button');
+  toTop.id = 'toTop';
+  toTop.setAttribute('aria-label', 'Back to top');
+  toTop.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg>';
+  document.body.appendChild(toTop);
+  window.addEventListener('scroll', () => {
+    toTop.classList.toggle('show', window.scrollY > 600);
+  }, { passive:true });
+  toTop.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
+</script>
+
+</body>
+</html>
